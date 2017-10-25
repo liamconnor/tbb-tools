@@ -17,6 +17,7 @@ header_len = 88 # number of bytes in header
 data_len = 1948 # number of bytes in data packet
 fn = 'sb_20170711_094130_1310.dat'
 fn = 'sb_20170711_094130_1310_copy.dat'
+fn = './test4.dat'
 
 # 013001010 is station 13, RSP 001, RCU 010 
 
@@ -69,7 +70,9 @@ class TBB_rawdata():
             return
 
         header = self.parse_header(data_bi[:self.header_len])
-        data = np.fromstring(data_bi[self.header_len:self.header_len+self.data_len], dtype=np.int16)
+        data = np.fromstring(data_bi[self.header_len:\
+                            self.header_len+self.data_len],\
+                            dtype=np.int16)
         final4 = data_bi[-4:]
 
         return data, header, final4
@@ -83,7 +86,7 @@ class TBB_rawdata():
         header_dict = self.header_dict()
 
         if band is not None:
-            h = self.change_band(header, newval=band)[0]
+            h = self.change_band(header, bands=band)
             h = np.array(h)
 
         if station_ID is not None:
@@ -103,6 +106,47 @@ class TBB_rawdata():
 
         return tuple(h)
 
+    def get_bands_present(self, header):
+      """ Find bands present given header. Based 
+      on code in 
+      https://svn.astron.nl/LOFAR/branches/TBB-DataWriter-11012/
+                RTCP/Cobalt/OutputProc/scripts/tbb-printframes.cc
+
+      As far as I can tell, the mapping is as follows:
+      bytes 9:73 in the header contain the bandSel 
+      
+      bandSel = [b1, b2, ..., b64]
+      b1 encodes bands [0, 1, ..., 7]
+      b64 encodes bands [504, ..., 511]
+
+      if b1 == 1, then log2(b1) is the bandnumber. In other 
+      words, each element of bandSel can only be [1, 2, 4, 16, 32, 64, 128] 
+      this opreation is done in (bs[i] & 1<<j)
+      """
+
+      header = np.array(header)
+      bandSel = header[9:9+64]
+      bands_present = []
+
+      for i in range(64):
+        for j in range(0, 8):
+          if (bandSel[i] & 1<<j):
+            bands_present.append(8*i+j)
+
+      return bands_present
+
+    def get_band_bit(self, bands):
+      """ Inverse of self.get_bands_present 
+      Give a band number between 0-511, returns 
+      index of 64-element bandSel array and the value. 
+
+      E.g. band 200 should return (25, 1) meaning 
+      bandSel[25] = 1
+      """
+      index, vals = bands//8, 2**(bands%8)
+
+      return index, vals
+
     def pack_header(self, header):
         assert type(header) != str, "Already in hex"
         s = struct.Struct(self.fmt)
@@ -110,47 +154,84 @@ class TBB_rawdata():
 
         return packed_header_data
 
-    def change_band(self, header, newval=8):
+    def change_band(self, header, bands=None):
         """ header should be tuple / array
         """
-        # Replace sub-band number 
-        values = header[0:21]+(newval,)+header[22:]
 
-        packed_header_data = self.pack_header(values)
-        #header_ = header[:offs] + packed_data + header[offs+header_len:]
+        if bands is None:
+          return header
 
-        return values, packed_header_data
+        if type(bands)==list:
+          bands = np.array(bands)
+        if type(header) in (list, tuple):
+          header = np.array(header)
+
+
+        index, vals = self.get_band_bit(bands)
+
+        header[9:9+64] *= 0
+        header[9:9+64][index] = vals 
+
+        # # Replace sub-band number 
+        # values = header[0:21]+(newval,)+header[22:]
+
+        # packed_header_data = self.pack_header(values)
+        # #header_ = header[:offs] + packed_data + header[offs+header_len:]
+
+        return header
 
     def write_for_new_image(self, fn, fnout='', 
-                nframes=10, nband=2, nframe=10, RCU_ID=[10], 
-                subbands=[16], RSP_ID=1, crc16=None):
+                nband=2, nframe=10, RCU_ID=None, 
+                subbands=None, RSP_ID=None, crc16=None):
         g = open(fnout, 'a')
 
         # all data frames for a single subband, then 
         # all dipoles 
 
-        for xx in RCU_ID:
-            for ii in subbands:
-                f = open(fn, 'r+')
+        # if subbands is None:
+        #   subbands = range(1)
+        # if RCU_ID is None:
+        #   RCU_ID = range(1)
+        # if nframes is None:
+        #   nframes = range(1)
 
-                for ff in range(nframes):
-                    r_tup = self.read_data(f)
-                    d, h, final4 = r_tup
-                    h = self.alter_header(h, RCU_ID=xx, band=ii, RSP_ID=RSP_ID, crc16=crc16)
-                    print h
-                    h = self.pack_header(h)
-                    g.write(h)  
-                    g.write(d)
-                    g.write(final4)
+#        for xx in RCU_ID:
 
-                f.close()
+        H = []
+        D = []
+        for ii in subbands:
+            f = open(fn, 'r+')
+
+            for ff in range(nframe):
+#            for ii in subbands:
+                try:
+                  r_tup = self.read_data(f)
+                  print r_tup[1][:7]
+                except:
+                  continue 
+                d, h, final4 = r_tup
+
+                H.append(h)
+                D.append(D)
+
+                h = self.alter_header(h, RCU_ID=RCU_ID, band=ii, RSP_ID=RSP_ID, crc16=crc16)
+                h = self.pack_header(h)
+
+                g.write(h)  
+                g.write(d)
+                g.write(final4)
+
+            f.close()
+
+        return H, D
 
 t = TBB_rawdata()
-
-os.system('rm -rf out3.dat')
-t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
-os.system('scp out_crc16err.dat lofar:~/')
-
+H, D = t.write_for_new_image(fn, fnout='./out_4dip.dat', nframe=10000, \
+                      RCU_ID=None, subbands=[100, 200, 300], \
+                      RSP_ID=None, crc16=None)
+# os.system('rm -rf out3.dat')
+# t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
+# os.system('scp out_crc16err.dat lofar:~/')
 
 def TBB_Writer_attrs():
     h5_attrs = [u'DOC_VERSION',
@@ -208,78 +289,78 @@ def lofar_usage_ICD_20227():
     return ICD_attrs 
 
 
-def doit(d, a):
+# def doit(d, a):
 
-    for ii in range(len(d)):
-        if d[ii]==a[0]:
-            if d[ii+1]==a[1]:
-                if d[ii+2]==a[2]:
-                    if d[ii+3]==a[3]:
-                        print d[ii:ii+8], ii
-                        return ii
+#     for ii in range(len(d)):
+#         if d[ii]==a[0]:
+#             if d[ii+1]==a[1]:
+#                 if d[ii+2]==a[2]:
+#                     if d[ii+3]==a[3]:
+#                         print d[ii:ii+8], ii
+#                         return ii
 
-def parse_header(header_str, fmt):
-    header = struct.unpack(fmt, header_str)
+# def parse_header(header_str, fmt):
+#     header = struct.unpack(fmt, header_str)
 
-    return header 
+#     return header 
 
-def read_data(f):
-    """ Read in one frame of data, length nfram bytes
-    and return data, header, and final four bytes (whose 
-        purpose I don't yet know)
-    """
-    data_bi = f.read(nfram)
+# def read_data(f):
+#     """ Read in one frame of data, length nfram bytes
+#     and return data, header, and final four bytes (whose 
+#         purpose I don't yet know)
+#     """
+#     data_bi = f.read(nfram)
 
-    if len(data_bi)==0:
-        return
+#     if len(data_bi)==0:
+#         return
 
-    header = parse_header(data_bi[:header_len], fmt)
-    data = np.fromstring(data_bi[header_len:header_len+data_len], dtype=np.int16)
-    final4 = data_bi[-4:]
+#     header = parse_header(data_bi[:header_len], fmt)
+#     data = np.fromstring(data_bi[header_len:header_len+data_len], dtype=np.int16)
+#     final4 = data_bi[-4:]
 
-    return data, header, final4
+#     return data, header, final4
 
-def pack_header(header, fmt):
-    s = struct.Struct(fmt)
-    packed_header_data = s.pack(*header)
+# def pack_header(header, fmt):
+#     s = struct.Struct(fmt)
+#     packed_header_data = s.pack(*header)
 
-    return packed_header_data
+#     return packed_header_data
 
-def change_band(header, fmt, newval=8):
-    # Replace sub-band number 
-    values = header[0:21]+(newval,)+header[22:]
+# def change_band(header, fmt, newval=8):
+#     # Replace sub-band number 
+#     values = header[0:21]+(newval,)+header[22:]
 
-    packed_header_data = pack_header(values, fmt)
-    #header_ = header[:offs] + packed_data + header[offs+header_len:]
+#     packed_header_data = pack_header(values, fmt)
+#     #header_ = header[:offs] + packed_data + header[offs+header_len:]
 
-    return packed_header_data
+#     return packed_header_data
 
-def write_for_new_image(fn, fnout='', nband=2, nframe=10):
-    f = open(fn, 'r+')
-    g = open(fnout, 'a')
+# def write_for_new_image(fn, fnout='', nband=2, nframe=10):
+#     f = open(fn, 'r+')
+#     g = open(fnout, 'a')
 
-    antennas = [1, 2]
+#     antennas = [1, 2]
 
-    for xx in antennas:
+#     for xx in antennas:
 
-    for ii in range(nframe):
-        r_tup = read_data(f)
-        d, h, final4 = r_tup
-        h = change_band(h, fmt, newval=8)
-        print d[0],ii
-        g.write(h)
-        g.write(d)
-        g.write(final4)
+#     for ii in range(nframe):
+#         r_tup = read_data(f)
+#         d, h, final4 = r_tup
+#         h = change_band(h, fmt, newval=8)
+#         print d[0],ii
+#         g.write(h)
+#         g.write(d)
+#         g.write(final4)
 
-    f = open(fn, 'r+')
+#     f = open(fn, 'r+')
 
-    for ii in range(nframe):
-        r_tup = read_data(f)
-        d, h, final4 = r_tup
-        h = change_band(h, fmt, newval=16)
-        g.write(h)
-        g.write(d)
-        g.write(final4)
+#     for ii in range(nframe):
+#         r_tup = read_data(f)
+#         d, h, final4 = r_tup
+#         h = change_band(h, fmt, newval=16)
+#         g.write(h)
+#         g.write(d)
+#         g.write(final4)
 
 
 # f = open(fn, 'r')
