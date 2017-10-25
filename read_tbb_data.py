@@ -10,20 +10,12 @@ data frame.
 import numpy as np
 import struct
 
-offs=0
-nfram=2040
-fmt = 'BBBBIIIHH64BHH'
-header_len = 88 # number of bytes in header
-data_len = 1948 # number of bytes in data packet
-fn = 'sb_20170711_094130_1310.dat'
-fn = 'sb_20170711_094130_1310_copy.dat'
-fn = './test4.dat'
 
-# 013001010 is station 13, RSP 001, RCU 010 
 
 class TBB_rawdata():
     """ Class to deal with the raw data from the 
     transient buffer boards
+    # 013001010 is station 13, RSP 001, RCU 010 
     """
     def __init__(self):
         self.filename = None
@@ -180,6 +172,56 @@ class TBB_rawdata():
 
         return header
 
+    def print_frame(self, header):
+        """ Imitating Alexander's cpp code
+        """
+#        Out[10]: (101, 0, 0, 200, 1000, 1507119117, 84278272, 487, 1, 0)
+        print "-------------------------------"
+        print "Station ID:       %12d" % header[0]
+        print "RSP ID:           %12d" % header[1]
+        print "RCU ID:           %12d" % header[2]
+        print "Sample Freq:      %12d" % header[3]
+        print "Seq Nr:           %12d" % header[4]
+        print "Time:             %12d" % header[5]
+        print "Band Nr:          %12d" % 0 # For now
+        print "Slice Nr:         %12d" % header[6]
+        print "NSamples/fr:      %12d" % header[7]
+        print "NFreq Bands:      %12d" % header[8]
+        print "Band(s) present:  %12d" % self.get_bands_present(header)[0]
+        print "-------------------------------"
+
+    def print_frames(self, fn, print_data=False, nframe=1000):
+        f = open(fn)
+
+        for ii in range(nframe):
+            try:
+                data, header, crc = self.read_data(f)
+                self.print_frame(header)
+
+                if print_data==True:
+                    print data
+            except:
+                return 
+
+    def write_to_file(self, header_list, data_list, crc32_list, fnout):
+        f = open(fnout, 'w+')
+        nframe = len(header_list)
+
+        for ii in arange(nframe)[::2]:
+            h = self.pack_header(header_list[ii])
+            f.write(h)
+            f.write(data_list[ii])
+            f.write(crc32_list[ii])
+
+        for ii in arange(nframe)[1::2]:
+            h = self.pack_header(header_list[ii])
+            f.write(h)
+            f.write(data_list[ii])
+            f.write(crc32_list[ii])           
+
+        print "Done writing to %s" % fnout
+
+
     def write_for_new_image(self, fn, fnout='', 
                 nband=2, nframe=10, RCU_ID=None, 
                 subbands=None, RSP_ID=None, crc16=None):
@@ -197,8 +239,9 @@ class TBB_rawdata():
 
 #        for xx in RCU_ID:
 
-        H = []
-        D = []
+        header_list = []
+        data_list = []
+        crc32_list = []
         for ii in subbands:
             f = open(fn, 'r+')
 
@@ -209,25 +252,28 @@ class TBB_rawdata():
                   print r_tup[1][:7]
                 except:
                   continue 
-                d, h, final4 = r_tup
+                d, h, crc32 = r_tup
 
-                H.append(h)
-                D.append(D)
-
-                h = self.alter_header(h, RCU_ID=RCU_ID, band=ii, RSP_ID=RSP_ID, crc16=crc16)
+                header_list.append(h)
+                data_list.append(d)
+                crc32_list.append(crc32)
+                h = self.alter_header(h, RCU_ID=RCU_ID, \
+                    band=ii, RSP_ID=RSP_ID, crc16=crc16)
                 h = self.pack_header(h)
 
                 g.write(h)  
                 g.write(d)
-                g.write(final4)
+                g.write(crc32)
 
             f.close()
 
-        return H, D
+        return header_list, data_list, crc32_list
+
+fn = './data/test4.dat'
 
 t = TBB_rawdata()
-H, D = t.write_for_new_image(fn, fnout='./out_4dip.dat', nframe=10000, \
-                      RCU_ID=None, subbands=[100, 200, 300], \
+H, D, crc = t.write_for_new_image(fn, fnout='./out_4dip.dat', nframe=10000, \
+                      RCU_ID=None, subbands=[100], \
                       RSP_ID=None, crc16=None)
 # os.system('rm -rf out3.dat')
 # t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
