@@ -10,13 +10,26 @@ Example usage:
 
 fn = './data/sb_20171004_121157_10131.dat'
 
-t = TBB_Rawdata()
-H, D, crc = t.write_for_new_image(fn, fnout='./newhere.dat', nframe=10000,
-                      RCU_ID=None, subbands=[100, 300],
-                      RSP_ID=None, crc16=None)
-# os.system('rm -rf out3.dat')
-# t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
-# os.system('scp out_crc16err.dat lofar:~/')
+TBB = TBB_Rawdata()
+
+Suppose you want to read in all the data after parsing headers:
+
+headers, data, crc32 = TBB.read_all_data(fn, print_headers=True)
+
+Suppose you want to print the first 10 frames, including 
+their data payloads, of some file:
+
+TBB.print_frames(fn, print_data=True)
+
+Suppose you want to alter a data file, forcing it to have 
+multiple subbands (in this case 100 and 300), 
+but not changing its dipoles:
+
+headers, data, crc32 = TBB.write_for_new_image(fn, 
+                                  fnout='./outfile.dat', nframe=10000,
+                                  RCU_ID=None, subbands=[100, 300],
+                                  RSP_ID=None, crc16=None)
+
 """
 
 
@@ -32,7 +45,7 @@ class TBB_Rawdata():
     def __init__(self):
         self.filename = None
         self.fmt = 'BBBBIIIHH64BHH'
-        self.nframe = 2040
+        self.bytes_per_frame = 2040
         self.header_len = 88 # number of bytes in header
         self.data_len = 1948 # number of bytes in data packet
         self.filename = None
@@ -68,7 +81,7 @@ class TBB_Rawdata():
         and return data, header, and final four bytes (whose 
             purpose I don't yet know)
         """
-        data_bi = f.read(self.nframe)
+        data_bi = f.read(self.bytes_per_frame)
 
         if len(data_bi)==0:
             return
@@ -77,9 +90,37 @@ class TBB_Rawdata():
         data = np.fromstring(data_bi[self.header_len:\
                             self.header_len+self.data_len],\
                             dtype=np.int16)
-        final4 = data_bi[-4:]
+        crc32 = data_bi[-4:]
 
-        return data, header, final4
+        return header, data, crc32
+
+    def read_all_data(self, fn, nframe=10000, print_headers=False):
+        """ Take filename fn, read in nframe frames 
+        and return 
+        a list of headers (header_full), 
+        a list of payloads (data_full), 
+        and a list of crc32s (crc32_full).
+        """
+        f = open(fn,'r')
+
+        data_full = []
+        header_full = []
+        crc32_full = []
+
+        for ii in range(nframe):
+            try: 
+                header, data, crc32 = self.read_data(f)
+          
+                data_full.append(data)
+                header_full.append(header)
+                crc32_full.append(crc32)
+
+                if print_headers is True:
+                    self.print_one_frame(header)
+            except:
+                break
+
+        return header_full, data_full, crc32_full
 
     def alter_header(self, header, 
                 band=None, station_ID=None, RSP_ID=None, 
@@ -90,10 +131,8 @@ class TBB_Rawdata():
         header_dict = self.header_dict()
 
         if band is not None:
-            print header
             h = self.change_band(header, bands=band)
             h = np.array(h)
-            print h 
         if station_ID is not None:
             h[header_dict['station_ID']] = station_ID
 
@@ -188,7 +227,6 @@ class TBB_Rawdata():
     def print_one_frame(self, header):
         """ Imitating Alexander's cpp code
         """
-#        Out[10]: (101, 0, 0, 200, 1000, 1507119117, 84278272, 487, 1, 0)
         print "-------------------------------"
         print "Station ID:       %12d" % header[0]
         print "RSP ID:           %12d" % header[1]
@@ -208,7 +246,7 @@ class TBB_Rawdata():
 
         for ii in range(nframe):
             try:
-                data, header, crc = self.read_data(f)
+                header, data, crc = self.read_data(f)
                 self.print_one_frame(header)
 
                 if print_data==True:
@@ -217,6 +255,11 @@ class TBB_Rawdata():
                 return 
 
     def write_to_file(self, header_list, data_list, crc32_list, fnout):
+        """ Take a list of headers, list of frames, and crc32 list 
+            and write to file fnout 
+
+            example: 
+        """
         f = open(fnout, 'w+')
         nframe = len(header_list)
 
@@ -225,12 +268,6 @@ class TBB_Rawdata():
             f.write(h)
             f.write(data_list[ii])
             f.write(crc32_list[ii])
-
-        # for ii in arange(nframe)[1::2]:
-        #     h = self.pack_header(header_list[ii])
-        #     f.write(h)
-        #     f.write(data_list[ii])
-        #     f.write(crc32_list[ii])           
 
         print "Done writing to %s" % fnout
 
@@ -243,17 +280,20 @@ class TBB_Rawdata():
         header_list = []
         data_list = []
         crc32_list = []
+
         for ii in subbands:
             f = open(fn, 'r+')
 
             for ff in range(nframe):
 #            for ii in subbands:
+                r_tup = self.read_data(f)
                 try:
                   r_tup = self.read_data(f)
-                  print r_tup[1][:7]
+                  if r_tup is None:
+                    continue
                 except:
                   continue 
-                d, h, crc32 = r_tup
+                h, d, crc32 = r_tup
 
                 data_list.append(d)
                 crc32_list.append(crc32)
@@ -270,7 +310,6 @@ class TBB_Rawdata():
             f.close()
 
         return header_list, data_list, crc32_list
-
 
 
 def TBB_Writer_attrs():
