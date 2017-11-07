@@ -4,12 +4,24 @@ The data are organized in 2040 byte frames, each
 of which starts with an 88 byte header of format 
 'BBBBIIIHH64BHH'. That is followed by a 1948 byte 
 data frame. 
+
+Example usage:
+==============
+
+fn = './data/sb_20171004_121157_10131.dat'
+
+t = TBB_Rawdata()
+H, D, crc = t.write_for_new_image(fn, fnout='./newhere.dat', nframe=10000,
+                      RCU_ID=None, subbands=[100, 300],
+                      RSP_ID=None, crc16=None)
+# os.system('rm -rf out3.dat')
+# t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
+# os.system('scp out_crc16err.dat lofar:~/')
 """
 
 
 import numpy as np
 import struct
-
 
 
 class TBB_Rawdata():
@@ -114,7 +126,7 @@ class TBB_Rawdata():
 
       if b1 == 1, then log2(b1) is the bandnumber. In other 
       words, each element of bandSel can only be [1, 2, 4, 16, 32, 64, 128] 
-      this opreation is done in (bs[i] & 1<<j)
+      this operation is done in (bs[i] & 1<<j)
       """
 
       header = np.array(header)
@@ -173,7 +185,7 @@ class TBB_Rawdata():
 
         return header
 
-    def print_frame(self, header):
+    def print_one_frame(self, header):
         """ Imitating Alexander's cpp code
         """
 #        Out[10]: (101, 0, 0, 200, 1000, 1507119117, 84278272, 487, 1, 0)
@@ -197,7 +209,7 @@ class TBB_Rawdata():
         for ii in range(nframe):
             try:
                 data, header, crc = self.read_data(f)
-                self.print_frame(header)
+                self.print_one_frame(header)
 
                 if print_data==True:
                     print data
@@ -228,18 +240,6 @@ class TBB_Rawdata():
                 subbands=None, RSP_ID=None, crc16=None):
         g = open(fnout, 'a')
 
-        # all data frames for a single subband, then 
-        # all dipoles 
-
-        # if subbands is None:
-        #   subbands = range(1)
-        # if RCU_ID is None:
-        #   RCU_ID = range(1)
-        # if nframes is None:
-        #   nframes = range(1)
-
-#        for xx in RCU_ID:
-
         header_list = []
         data_list = []
         crc32_list = []
@@ -255,11 +255,12 @@ class TBB_Rawdata():
                   continue 
                 d, h, crc32 = r_tup
 
-                header_list.append(h)
                 data_list.append(d)
                 crc32_list.append(crc32)
                 h = self.alter_header(h, RCU_ID=RCU_ID, \
                     band=ii, RSP_ID=RSP_ID, crc16=crc16)
+
+                header_list.append(h)
                 h = self.pack_header(h)
 
                 g.write(h)  
@@ -270,15 +271,7 @@ class TBB_Rawdata():
 
         return header_list, data_list, crc32_list
 
-fn = './data/test4.dat'
 
-t = TBB_Rawdata()
-H, D, crc = t.write_for_new_image(fn, fnout='./out_4dip.dat', nframe=10000, \
-                      RCU_ID=None, subbands=[100, 200], \
-                      RSP_ID=None, crc16=None)
-# os.system('rm -rf out3.dat')
-# t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
-# os.system('scp out_crc16err.dat lofar:~/')
 
 def TBB_Writer_attrs():
     h5_attrs = [u'DOC_VERSION',
@@ -336,134 +329,5 @@ def lofar_usage_ICD_20227():
     return ICD_attrs 
 
 
-# def doit(d, a):
-
-#     for ii in range(len(d)):
-#         if d[ii]==a[0]:
-#             if d[ii+1]==a[1]:
-#                 if d[ii+2]==a[2]:
-#                     if d[ii+3]==a[3]:
-#                         print d[ii:ii+8], ii
-#                         return ii
-
-# def parse_header(header_str, fmt):
-#     header = struct.unpack(fmt, header_str)
-
-#     return header 
-
-# def read_data(f):
-#     """ Read in one frame of data, length nfram bytes
-#     and return data, header, and final four bytes (whose 
-#         purpose I don't yet know)
-#     """
-#     data_bi = f.read(nfram)
-
-#     if len(data_bi)==0:
-#         return
-
-#     header = parse_header(data_bi[:header_len], fmt)
-#     data = np.fromstring(data_bi[header_len:header_len+data_len], dtype=np.int16)
-#     final4 = data_bi[-4:]
-
-#     return data, header, final4
-
-# def pack_header(header, fmt):
-#     s = struct.Struct(fmt)
-#     packed_header_data = s.pack(*header)
-
-#     return packed_header_data
-
-# def change_band(header, fmt, newval=8):
-#     # Replace sub-band number 
-#     values = header[0:21]+(newval,)+header[22:]
-
-#     packed_header_data = pack_header(values, fmt)
-#     #header_ = header[:offs] + packed_data + header[offs+header_len:]
-
-#     return packed_header_data
-
-# def write_for_new_image(fn, fnout='', nband=2, nframe=10):
-#     f = open(fn, 'r+')
-#     g = open(fnout, 'a')
-
-#     antennas = [1, 2]
-
-#     for xx in antennas:
-
-#     for ii in range(nframe):
-#         r_tup = read_data(f)
-#         d, h, final4 = r_tup
-#         h = change_band(h, fmt, newval=8)
-#         print d[0],ii
-#         g.write(h)
-#         g.write(d)
-#         g.write(final4)
-
-#     f = open(fn, 'r+')
-
-#     for ii in range(nframe):
-#         r_tup = read_data(f)
-#         d, h, final4 = r_tup
-#         h = change_band(h, fmt, newval=16)
-#         g.write(h)
-#         g.write(d)
-#         g.write(final4)
-
-
-# f = open(fn, 'r')
-
-# D, H = [], []
-
-# fnout = 'sb_20170711_094130_1310_output_twoband_oneheader.dat'
-# g = open(fnout, 'a')
-
-# while True:
-#     r_tup = read_data(f)
-
-#     if r_tup==None:
-#         break
-#     else:
-#         d, h, final4 = r_tup
-# #       print d
-# #       h_ = change_band(h, fmt, newval=16)
-#         h = change_band(h, fmt, newval=16)
-
-# #       print parse_header(h, fmt)
-# #       print parse_header(h_, fmt)
-
-#         g.write(h)
-#         g.write(d)
-#         g.write(final4)
-
-#         print h 
-#         print d 
-#         print final4
-
-# #       g.write(h_)
-#         # g.write(d)
-#         # g.write(final4)   
-
-
-# fn = 'sb_20170711_094130_1310.dat'
-
-# f = open(fn, 'r')
-# data = f.read(2400)
-# struct.unpack(fmt,data[offs:offs+88])
-
-# d = struct.unpack(fmt,data[offs:offs+88])
-# dd = np.fromstring(data[offs+88:offs+nfram], dtype=np.int16)
-# f.close()
-
-# # Replace sub-band number
-# values = d[0:21]+(8,)+d[22:]
-# s = struct.Struct(fmt)
-# packed_data = s.pack(*values)
-# data_ = data[:offs] + packed_data + data[offs+88:]
-
-# assert len(data_)==len(data)
-# fnout = 'sb_20170711_094130_1310_output_test.dat'
-# g = open(fnout, 'a')
-# g.write(data_)
-# g.close()
 
 
