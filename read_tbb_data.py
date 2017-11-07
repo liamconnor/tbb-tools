@@ -12,7 +12,7 @@ import struct
 
 
 
-class TBB_rawdata():
+class TBB_Rawdata():
     """ Class to deal with the raw data from the 
     transient buffer boards
     # 013001010 is station 13, RSP 001, RCU 010 
@@ -78,9 +78,10 @@ class TBB_rawdata():
         header_dict = self.header_dict()
 
         if band is not None:
+            print header
             h = self.change_band(header, bands=band)
             h = np.array(h)
-
+            print h 
         if station_ID is not None:
             h[header_dict['station_ID']] = station_ID
 
@@ -207,17 +208,17 @@ class TBB_rawdata():
         f = open(fnout, 'w+')
         nframe = len(header_list)
 
-        for ii in arange(nframe)[::2]:
+        for ii in arange(nframe)[:]:
             h = self.pack_header(header_list[ii])
             f.write(h)
             f.write(data_list[ii])
             f.write(crc32_list[ii])
 
-        for ii in arange(nframe)[1::2]:
-            h = self.pack_header(header_list[ii])
-            f.write(h)
-            f.write(data_list[ii])
-            f.write(crc32_list[ii])           
+        # for ii in arange(nframe)[1::2]:
+        #     h = self.pack_header(header_list[ii])
+        #     f.write(h)
+        #     f.write(data_list[ii])
+        #     f.write(crc32_list[ii])           
 
         print "Done writing to %s" % fnout
 
@@ -271,9 +272,9 @@ class TBB_rawdata():
 
 fn = './data/test4.dat'
 
-t = TBB_rawdata()
+t = TBB_Rawdata()
 H, D, crc = t.write_for_new_image(fn, fnout='./out_4dip.dat', nframe=10000, \
-                      RCU_ID=None, subbands=[100], \
+                      RCU_ID=None, subbands=[100, 200], \
                       RSP_ID=None, crc16=None)
 # os.system('rm -rf out3.dat')
 # t.write_for_new_image(fn, fnout='./out_crc16err.dat', nframe=10, RCU_ID=[10], subbands=[16], RSP_ID=1, crc16=21874)
