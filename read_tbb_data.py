@@ -42,13 +42,17 @@ class TBB_Rawdata():
     transient buffer boards
     # 013001010 is station 13, RSP 001, RCU 010 
     """
-    def __init__(self):
+    def __init__(self, version='old'):
         self.filename = None
         self.fmt = 'BBBBIIIHH64BHH'
         self.bytes_per_frame = 2040
         self.header_len = 88 # number of bytes in header
         self.data_len = 1948 # number of bytes in data packet
         self.filename = None
+
+        if version is 'new':
+          self.bytes_per_frame = 2012
+          self.data_len = 1920
 
     def header_dict(self):
         # dictionary whose keys are the frame parameters 
