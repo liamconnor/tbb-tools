@@ -424,6 +424,16 @@ class TBBh5_Reader():
 
     return rcus, dipole_names
 
+  def station_data(self, stations_group):
+    rcus, dipole_names = self.get_rcus_present(stations_group)
+
+    for dipole_name in dipole_names:
+      dipole_groups = stations_group[dipole_name]
+
+      for sb_name in dipole_groups:
+        print(dipole_groups[sb_name][:].shape, sb_name)
+
+
 
 
 def TBB_Writer_attrs():
