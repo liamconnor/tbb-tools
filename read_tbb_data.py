@@ -434,6 +434,7 @@ class TBBh5_Reader():
     nrcu = len(rcus)
 
     data_rcu = []
+    dipole_sb_map = []
 
     for dipole_name in dipole_names:
       dipole_groups = stations_group[dipole_name]
@@ -450,12 +451,12 @@ class TBBh5_Reader():
 
         data_rcu.append(data_complex)
 
-        print(dipole_name, sb_name)
+        dipole_sb_map.append([dipole_name, sb_name])
 
     data_rcu = np.concatenate(data_rcu)  
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
-    return data_rcu
+    return data_rcu, dipole_sb_map
 
 
 def TBB_Writer_attrs():
