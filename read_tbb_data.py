@@ -467,7 +467,7 @@ def compare_data(fnh5, fndat):
 
   Th5 = TBBh5_Reader(fnh5)
 
-  station_group = Th5.get_stations_groups()
+  station_group = Th5.get_stations_groups()[0][0]
   data_arr_h5, rcu_map = Th5.station_data(station_group)
 
   return data_arr_h5, data_arr_dat
