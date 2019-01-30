@@ -42,8 +42,9 @@ class TBB_Rawdata():
     transient buffer boards
     # 013001010 is station 13, RSP 001, RCU 010 
     """
-    def __init__(self, version='old'):
+    def __init__(self, version='new'):
         self.filename = None
+
         self.fmt = 'BBBBIIIHH64BHH'
         self.bytes_per_frame = 2040
         self.header_len = 88 # number of bytes in header
@@ -124,7 +125,28 @@ class TBB_Rawdata():
             except:
                 break
 
-        return header_full, data_full, crc32_full
+        return np.array(header_full), np.array(data_full), np.array(crc32_full)
+
+    def construct_rcu_arr(self, data_full, header_full):
+        """ Take data and header arrays and reshape into 
+        an np.arr of shape (ncru, nframe, nsample_per_frame)
+
+        returning the rcu list and data array
+        """
+        rcus_full = header_full[:, 2]
+        rcus = list(set(header_full[:,2]))
+        nrcu = len(rcus)
+        samples_per_frame = data_full.shape[-1]
+        nframe = data_full.shape[0]//nrcu
+        
+        data_rcu = np.zeros([nrcu, nframe, samples_per_frame], dtype=data_full.dtype)
+        
+        for ii, rcu in enumerate(rcus):
+            data_rcu[ii] = data_full[rcus_full==rcu]
+
+        print(data_rcu.shape)
+
+        return rcus, data_rcu
 
     def alter_header(self, header, 
                 band=None, station_ID=None, RSP_ID=None, 
@@ -202,6 +224,22 @@ class TBB_Rawdata():
 
         return packed_header_data
 
+    def get_band_array(self, header_full, nframe=np.inf):
+        sb_arr = []
+        n = min(len(header_full), nframe)
+
+        for ii in xrange(n//1):
+            if ii>0:
+                sb2 = self.get_bands_present(header_full[ii*1])[0]
+                if sb!=sb2:
+                    print(sb, sb2, ii)
+            sb = self.get_bands_present(header_full[ii*1])[0]
+            sb_arr.append(sb)
+
+        sb_arr = np.array(sb_arr)
+
+        return sb_arr
+
     def change_band(self, header, bands=None):
         """ header should be tuple / array
         """
@@ -267,7 +305,7 @@ class TBB_Rawdata():
         f = open(fnout, 'w+')
         nframe = len(header_list)
 
-        for ii in arange(nframe)[:]:
+        for ii in np.arange(nframe)[:]:
             h = self.pack_header(header_list[ii])
             f.write(h)
             f.write(data_list[ii])
