@@ -417,6 +417,8 @@ class TBBh5_Reader():
 
     dipole_names = stations_group.keys()
 
+    rcus = []
+
     for dn in dipole_names:
       rcus.append(dn[-2:])
 
