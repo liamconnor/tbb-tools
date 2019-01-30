@@ -435,6 +435,7 @@ class TBBh5_Reader():
       dipole_groups = stations_group[dipole_name]
 
       for sb_name in dipole_groups:
+        print(sb_name, dipole_name)
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
 
