@@ -440,7 +440,7 @@ class TBBh5_Reader():
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
 
-        data_complex = np.empty([len(dara_r)])
+        data_complex = np.empty([len(data_r)])
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
 
