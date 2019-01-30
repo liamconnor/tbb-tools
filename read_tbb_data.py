@@ -447,7 +447,7 @@ class TBBh5_Reader():
         data_rcu.append(data_complex)
 
     data_rcu = np.concatenate(data_rcu)  
-    data_rcu = data_rcu.reshape(nrcu, -1, nsample)
+    data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
     return data_rcu
 
