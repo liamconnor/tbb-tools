@@ -393,7 +393,7 @@ class TBBh5_Reader():
              u'NOF_STATIONS']
 
   def read_h5(self):
-    f = h5py.File(fn,'r')
+    f = h5py.File(self.fn,'r')
 
     return f, f.attrs 
 
