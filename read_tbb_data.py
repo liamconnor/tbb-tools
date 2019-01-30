@@ -429,7 +429,7 @@ class TBBh5_Reader():
 
     nrcu = len(rcus)
 
-    data_rcu = np.zeros([nrcu])
+    data_rcu = []
 
     for dipole_name in dipole_names:
       dipole_groups = stations_group[dipole_name]
