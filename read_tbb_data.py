@@ -35,6 +35,7 @@ headers, data, crc32 = TBB.write_for_new_image(fn,
 
 import numpy as np
 import struct
+import h5py
 
 
 class TBB_Rawdata():
@@ -352,6 +353,71 @@ class TBB_Rawdata():
             f.close()
 
         return header_list, data_list, crc32_list
+
+class TBBh5_Reader():
+
+  def __init__(self, fn):
+    self.fn = fn
+    h5_attrs = [u'DOC_VERSION',
+             u'PROJECT_CO_I',
+             u'FILETYPE',
+             u'NOTES',
+             u'DOC_NAME',
+             u'FILENAME',
+             u'OBSERVATION_NOF_STATIONS',
+             u'OBSERVATION_FREQUENCY_MAX',
+             u'OBSERVATION_END_MJD',
+             u'FILTER_SELECTION',
+             u'OBSERVATION_STATIONS_LIST',
+             u'OBSERVATION_START_UTC',
+             u'FILEDATE',
+             u'TELESCOPE',
+             u'ANTENNA_SET',
+             u'OBSERVATION_END_UTC',
+             u'PROJECT_PI',
+             u'TARGETS',
+             u'OBSERVATION_ID',
+             u'OPERATING_MODE',
+             u'PROJECT_CONTACT',
+             u'SYSTEM_VERSION',
+             u'OBSERVATION_NOF_BITS_PER_SAMPLE',
+             u'GROUPTYPE',
+             u'CLOCK_FREQUENCY',
+             u'OBSERVATION_FREQUENCY_CENTER',
+             u'PROJECT_ID',
+             u'OBSERVATION_FREQUENCY_MIN',
+             u'OBSERVATION_FREQUENCY_UNIT',
+             u'CLOCK_FREQUENCY_UNIT',
+             u'PROJECT_TITLE',
+             u'OBSERVATION_START_MJD',
+             u'NOF_STATIONS']
+
+  def read_h5(self):
+    f = h5py.File(fn,'r')
+
+    return f, f.attrs 
+
+  def get_stations_present(self):
+    f, attrs = self.read_h5()
+    stations = attrs['OBSERVATION_STATIONS_LIST']
+
+    for stat in stations:
+      try:
+        stations_list.append(f[stat])
+      except:
+        continue
+
+    return stations_list
+
+  def get_rcus_present(self):
+    pass
+
+
+
+
+
+  # Goal: Create array like that produced by TBB_Rawdata.construct_rcu_arr
+
 
 
 def TBB_Writer_attrs():
