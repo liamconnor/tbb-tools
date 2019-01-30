@@ -428,7 +428,7 @@ class TBBh5_Reader():
     rcus, dipole_names = self.get_rcus_present(stations_group)
 
     ind = np.argsort(rcus)
-    dipole_names = dipole_names[ind]
+    dipole_names = np.array(dipole_names)[ind]
     rcus = rcus[ind]
 
     nrcu = len(rcus)
