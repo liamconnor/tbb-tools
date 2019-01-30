@@ -404,7 +404,8 @@ class TBBh5_Reader():
 
     for stat in stations:
       try:
-        stations_list.append(f[stat])
+        statname = 'STATION_%s' % stat[:5]
+        stations_list.append(f[statname])
       except:
         continue
 
