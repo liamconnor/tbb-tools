@@ -397,28 +397,30 @@ class TBBh5_Reader():
 
     return f, f.attrs 
 
-  def get_stations_present(self):
+  def get_stations_groups(self):
     f, attrs = self.read_h5()
     stations = attrs['OBSERVATION_STATIONS_LIST']
+    stations_groups = []
     stations_list = []
 
     for stat in stations:
       try:
         statname = 'STATION_%s' % stat[:5]
-        stations_list.append(f[statname])
+        stations_groups.append(f[statname])
+        stations_list.append(statname)
       except:
         continue
 
-    return stations_list
+    return stations_groups, stations_list
 
-  def get_rcus_present(self):
-    pass
+  def get_rcus_present(self, stations_group):
 
+    dipole_names = stations_group.keys()
 
+    for dn in dipole_names:
+      rcus.append(dn[-2:])
 
-
-
-  # Goal: Create array like that produced by TBB_Rawdata.construct_rcu_arr
+    return rcus, dipole_names
 
 
 
