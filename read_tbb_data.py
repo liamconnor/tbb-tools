@@ -431,7 +431,10 @@ class TBBh5_Reader():
 
     data_rcu = []
 
-    for dipole_name in dipole_names:
+    for ii, rcu in enumerate(list(set(rcus))):
+      dipole_name = dipole_names[0][:-2] + '%.2d' % ii 
+
+    #for dipole_name in dipole_names:
       dipole_groups = stations_group[dipole_name]
 
       for sb_name in dipole_groups:
@@ -439,12 +442,14 @@ class TBBh5_Reader():
         data_i = dipole_groups[sb_name]['imag']        
 
         nsample = len(data_r)
-        print(sb_name, dipole_name, nsample)
+
         data_complex = np.empty([2*nsample])
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
 
         data_rcu.append(data_complex)
+
+        print(dipole_name, sb_name)
 
     data_rcu = np.concatenate(data_rcu)  
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
