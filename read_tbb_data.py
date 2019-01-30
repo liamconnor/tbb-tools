@@ -435,11 +435,11 @@ class TBBh5_Reader():
       dipole_groups = stations_group[dipole_name]
 
       for sb_name in dipole_groups:
-        print(sb_name, dipole_name)
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
 
         nsample = len(data_r)
+        print(sb_name, dipole_name, nsample)
         data_complex = np.empty([2*nsample])
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
