@@ -147,7 +147,7 @@ class TBB_Rawdata():
 
         print(data_rcu.shape)
 
-        return rcus, data_rcu
+        return data_rcu, rcus
 
     def alter_header(self, header, 
                 band=None, station_ID=None, RSP_ID=None, 
@@ -457,6 +457,20 @@ class TBBh5_Reader():
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
     return data_rcu, dipole_sb_map
+
+def compare_data(fnh5, fndat):
+
+  Traw = TBB_Rawdata('new')
+
+  h, d, crc32_full = Traw.read_all_data(fndat, nframe=10000000)
+  data_arr_dat, rcus = Traw.construct_rcu_arr(d, h)
+
+  Th5 = TBBh5_Reader(fnh5)
+
+  station_group = Th5.get_stations_groups()
+  data_arr_h5, rcu_map = Th5.station_data(station_group)
+
+  return data_arr_h5, data_arr_dat
 
 
 def TBB_Writer_attrs():
