@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np 
 import socket, struct, time
 
@@ -34,12 +36,13 @@ def compare_dat_raw(fndat, fnraw):
 
     return data_dat, data_raw, dat_diff, data_full, header_full
 
-def listen(adresses, fn=None):
+def listen(addresses, fn=None):
     T = read_tbb_data.TBB_Rawdata('new')
 
     server_sockets = []
 
-    for ad in adresses:
+    for ad in addresses:
+        print("Binding to %d" % ad)
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         server_socket.bind(("", ad))
         server_sockets.append(server_socket)
@@ -56,3 +59,12 @@ def listen(adresses, fn=None):
             if fn is not None:
                 f.write(recvdata)
 
+if __name__=='__main__':
+    fn = sys.argv[1]
+    print(fn)
+    addresses = []
+
+    for address in sys.argv[2:]:
+        addresses.append(int(address))
+
+    listen(addresses, fn=None)
