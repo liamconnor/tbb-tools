@@ -36,7 +36,7 @@ def compare_dat_raw(fndat, fnraw):
 
     return data_dat, data_raw, dat_diff, data_full, header_full
 
-def listen(addresses, fn=None):
+def listen(addresses, nframe=10000, fn=None):
     T = read_tbb_data.TBB_Rawdata('new')
 
     server_sockets = []
@@ -48,11 +48,12 @@ def listen(addresses, fn=None):
         server_sockets.append(server_socket)
 
     while True:
+#    for xx in range(nframe):
         if fn is not None:
             f = open(fn, 'a+')
 
         for server_socket in server_sockets:
-            recvdata, address = server_socket.recvfrom(2400)
+            recvdata, address = server_socket.recvfrom(2200)
             h = T.parse_header(recvdata[:88])
             print(address)
             print(T.print_one_frame(h))
@@ -61,10 +62,12 @@ def listen(addresses, fn=None):
 
 if __name__=='__main__':
     fn = sys.argv[1]
-    print(fn)
     addresses = []
 
-    for address in sys.argv[2:]:
+    nsample = sys.argv[2]
+    nframe = int(nsample)//480
+
+    for address in sys.argv[3:]:
         addresses.append(int(address))
 
-    listen(addresses, fn=None)
+    listen(addresses, nframe=nframe, fn=fn)

@@ -358,6 +358,7 @@ class TBBh5_Reader():
 
   def __init__(self, fn):
     self.fn = fn
+    self.delay_constant = 4148.808 
     h5_attrs = [u'DOC_VERSION',
                u'PROJECT_CO_I',
                u'FILETYPE',
@@ -424,20 +425,39 @@ class TBBh5_Reader():
 
     return rcus, dipole_names
 
-  def print_summary_data(self):
+  def print_summary_data(self, fn):
     station_groups, stations_list = self.get_stations_groups()
-
     for station_group in station_groups:
       rcus, dipole_names = self.get_rcus_present(station_group)
       print("===========DIPOLES for %s==========" % station_group.name)
       for dd in dipole_names:
         print(dd)
-        print("SUB-BANDS:")        
+        tarr = []
+        print("SUB-BANDS:")
         for sb in np.sort(station_group[dd].keys()):
+          t0_int = station_group[dd][sb].attrs['TIME']
+          slice0 = station_group[dd][sb].attrs['SLICE_NUMBER']
+          t0 = t0_int + 5.12e-6*slice0
+          tarr.append(t0)
+          #print(station_group[dd][sb].attrs.items())
 #        for sb in station_group.items()[-1][-1].keys():
-          print("     %s" % sb)
+          print("     %s t0: %f" % (sb, t0))
+        print("     max delay: %f" % np.abs(tarr[-1]-tarr[0]))
       print("===========DIPOLES for %s==========\n\n" % station_group.name)
 
+  def get_time_arr(self, fn):
+    station_groups, stations_list = self.get_stations_groups()
+    tarr = []
+    for station_group in station_groups:
+      rcus, dipole_names = self.get_rcus_present(station_group)
+      for dd in dipole_names:
+        for sb in np.sort(station_group[dd].keys()):
+          t0_int = station_group[dd][sb].attrs['TIME']
+          slice0 = station_group[dd][sb].attrs['SLICE_NUMBER']
+          t0 = t0_int + 5.12e-6*slice0
+          tarr.append(t0)
+
+    return tarr
 
   def voltage_to_intensity(self, data_arr_volt):
     """ Assume last axis is time (Re, Im, Re, ...)
