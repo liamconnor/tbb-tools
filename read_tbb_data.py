@@ -432,7 +432,7 @@ class TBBh5_Reader():
       print("===========DIPOLES for %s==========" % station_group.name)
       for dd in dipole_names:
         print(dd)
-        for sb in station_group[dipole_names].keys():
+        for sb in station_group[dd].keys():
 #        for sb in station_group.items()[-1][-1].keys():
           print(sb)
       print("========================================\n\n")
