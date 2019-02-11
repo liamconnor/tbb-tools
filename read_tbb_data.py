@@ -426,7 +426,7 @@ class TBBh5_Reader():
 
   def print_summary_data(self, fn):
     station_groups = self.get_stations_groups()
-    pritn(station_groups)
+    print(station_groups)
 
   def voltage_to_intensity(self, data_arr_volt):
     """ Assume last axis is time (Re, Im, Re, ...)
