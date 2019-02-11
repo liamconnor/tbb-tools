@@ -81,7 +81,6 @@ class TBB_Rawdata():
 
         return header 
 
-
     def read_data(self, f):
         """ Read in one frame of data, length nfram bytes
         and return data, header, and final four bytes (whose 
@@ -485,11 +484,21 @@ class TBBh5_Reader():
 
     data_rcu = []
     dipole_sb_map = []
+    t0_alldipoles = []
 
     for dipole_name in dipole_names:
       dipole_groups = stations_group[dipole_name]
 
+      t0_sb = []
       for sb_name in np.sort(dipole_groups):
+        try:
+          t0_int = dipole_groups[sb_name].attrs['TIME']
+          slice0 = dipole_groups[sb_name].attrs['SLICE_NUMBER']
+          t0 = t0_int + 5.12e-6*slice0
+          t0_sb.append(t0)
+        except:
+          print("Could not get time data")
+
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
 
@@ -503,12 +512,18 @@ class TBBh5_Reader():
 
         dipole_sb_map.append([dipole_name, sb_name])
 
+      t0_alldipoles.append(t0_sb)
+
     data_rcu = np.concatenate(data_rcu)  
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
-    return data_rcu, dipole_sb_map
+    return data_rcu, dipole_sb_map, t0_alldipoles
 
-
+  def construct_array_sweep(self):
+    station_name = list(set(self.get_stations_groups()[1]))
+    data, mapping, t0_alldipoles = T.station_data(station_name[0])
+    print(len(t0_alldipoles))
+    print(len(t0_alldipoles[0]))
 
 def compare_data(fnh5, fndat):
 
@@ -520,7 +535,7 @@ def compare_data(fnh5, fndat):
   Th5 = TBBh5_Reader(fnh5)
 
   station_group = Th5.get_stations_groups()[0][0]
-  data_arr_h5, rcu_map = Th5.station_data(station_group)
+  data_arr_h5, rcu_map, t0_alldipoles = Th5.station_data(station_group)
 
   return data_arr_h5, data_arr_dat
 
