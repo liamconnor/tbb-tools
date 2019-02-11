@@ -429,7 +429,7 @@ class TBBh5_Reader():
     print(station_groups[0])
 
     for station_group in station_groups:
-      rcus, dipole_names = get_rcus_present(station_group)
+      rcus, dipole_names = self.get_rcus_present(station_group)
       print(rcus)
       print(dipole_names)
 
