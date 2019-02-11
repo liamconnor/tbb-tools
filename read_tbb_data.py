@@ -413,9 +413,9 @@ class TBBh5_Reader():
 
     return stations_groups, stations_list
 
-  def get_rcus_present(self, stations_group):
+  def get_rcus_present(self, station_group):
 
-    dipole_names = stations_group.keys()
+    dipole_names = station_group.keys()
 
     rcus = []
 
@@ -426,7 +426,12 @@ class TBBh5_Reader():
 
   def print_summary_data(self, fn):
     station_groups = self.get_stations_groups()
-    print(station_groups)
+    print(station_groups[0])
+
+    for station_group in station_groups:
+      rcus, dipole_names = get_rcus_present(station_group)
+      print(rcus)
+      print(dipole_names)
 
   def voltage_to_intensity(self, data_arr_volt):
     """ Assume last axis is time (Re, Im, Re, ...)
