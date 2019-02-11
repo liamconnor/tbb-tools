@@ -11,10 +11,14 @@ if __name__=='__main__':
     T = read_tbb_data.TBBh5_Reader(fn)
     station_name = list(set(T.get_stations_groups()[1]))
     data, mapping, tt = T.station_data(station_name[0])
-    print(len(tt))
-    print(len(tt[0]))
+    tt = np.array(tt)
+    print(tt.shape)
 
     data_I = T.voltage_to_intensity(data)
+
+    data_tf = data_I.mean(0)
+    
+
     fig = plt.figure()
     plt.plot(data_I.mean(0).mean(-1))
     plt.semilogy()
