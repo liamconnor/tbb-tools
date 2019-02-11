@@ -435,7 +435,7 @@ class TBBh5_Reader():
         for sb in station_group[dd].keys():
           print("SUB-BANDS:")
 #        for sb in station_group.items()[-1][-1].keys():
-          print("     " % sb)
+          print("     %s" % sb)
       print("===========DIPOLES for %s==========\n\n" % station_group.name)
 
 
