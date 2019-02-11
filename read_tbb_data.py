@@ -424,6 +424,14 @@ class TBBh5_Reader():
 
     return rcus, dipole_names
 
+  def voltage_to_intensity(self, data_arr_volt):
+    """ Assume last axis is time (Re, Im, Re, ...)
+    """
+
+    data_arr_int = data_arr_volt[..., ::2]**2 + data_arr_volt[..., 1::2]**2
+
+    return data_arr_int
+
   def station_data(self, stations_group):
     rcus, dipole_names = self.get_rcus_present(stations_group)
 
@@ -457,6 +465,8 @@ class TBBh5_Reader():
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
     return data_rcu, dipole_sb_map
+
+
 
 def compare_data(fnh5, fndat):
 
