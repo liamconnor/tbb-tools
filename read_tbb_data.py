@@ -424,7 +424,7 @@ class TBBh5_Reader():
 
     return rcus, dipole_names
 
-  def print_summary_data(self, fn):
+  def print_summary_data(self):
     station_groups, stations_list = self.get_stations_groups()
 
     for station_group in station_groups:
@@ -447,7 +447,9 @@ class TBBh5_Reader():
 
     return data_arr_int
 
-  def station_data(self, stations_group):
+  def station_data(self, station_name):
+    f, attrs = self.read_h5()
+    stations_group = f[station_name]
     rcus, dipole_names = self.get_rcus_present(stations_group)
 
     ind = np.argsort(rcus)
