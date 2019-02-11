@@ -429,7 +429,7 @@ class TBBh5_Reader():
 
     for station_group in station_groups:
       rcus, dipole_names = self.get_rcus_present(station_group)
-      print("===========DIPOLES for %s==========" % station_group)
+      print("===========DIPOLES for %s==========" % station_group.keys())
       for dd in dipole_names:
         print(dd)
       print("===================================")
