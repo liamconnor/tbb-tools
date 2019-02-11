@@ -448,6 +448,11 @@ class TBBh5_Reader():
     return data_arr_int
 
   def station_data(self, station_name):
+    """ Construct voltage array of all data 
+    in given station. The output array will be 
+    (nrcu, nsubband, nsamples). The dipole/SB map 
+    is also returned
+    """
     f, attrs = self.read_h5()
     stations_group = f[station_name]
     rcus, dipole_names = self.get_rcus_present(stations_group)
@@ -464,7 +469,7 @@ class TBBh5_Reader():
     for dipole_name in dipole_names:
       dipole_groups = stations_group[dipole_name]
 
-      for sb_name in dipole_groups:
+      for sb_name in np.sort(dipole_groups):
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
 
