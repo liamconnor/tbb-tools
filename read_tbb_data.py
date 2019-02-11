@@ -424,6 +424,9 @@ class TBBh5_Reader():
 
     return rcus, dipole_names
 
+  def print_summary_data(self, fn):
+    pass
+
   def voltage_to_intensity(self, data_arr_volt):
     """ Assume last axis is time (Re, Im, Re, ...)
     """
