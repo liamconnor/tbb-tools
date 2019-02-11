@@ -433,9 +433,10 @@ class TBBh5_Reader():
       for dd in dipole_names:
         print(dd)
         for sb in station_group[dd].keys():
+          print("SUB-BANDS:")
 #        for sb in station_group.items()[-1][-1].keys():
-          print(sb)
-      print("========================================\n\n")
+          print("     " % sb)
+      print("===========DIPOLES for %s==========\n\n" % station_group.name)
 
 
   def voltage_to_intensity(self, data_arr_volt):
