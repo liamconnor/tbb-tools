@@ -491,18 +491,20 @@ class TBBh5_Reader():
 
       t0_sb = []
       for sb_name in np.sort(dipole_groups):
-        try:
-          t0_int = dipole_groups[sb_name].attrs['TIME']
-          slice0 = dipole_groups[sb_name].attrs['SLICE_NUMBER']
-          t0 = t0_int + 5.12e-6*slice0
-          t0_sb.append(t0)
-        except:
-          print("Could not get time data")
 
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
 
         nsample = len(data_r)
+
+        try:
+          t0_int = dipole_groups[sb_name].attrs['TIME']
+          slice0 = dipole_groups[sb_name].attrs['SLICE_NUMBER']
+          t0 = t0_int + 5.12e-6*slice0
+          tarr = np.linspace(t0, t0+nsample*5.12e-6, nsample)
+          t0_sb.append(tarr)
+        except:
+          print("Could not get time data")
 
         data_complex = np.empty([2*nsample])
         data_complex[::2] = data_r
@@ -522,8 +524,8 @@ class TBBh5_Reader():
   def construct_array_sweep(self):
     station_name = list(set(self.get_stations_groups()[1]))
     data, mapping, t0_alldipoles = T.station_data(station_name[0])
-    print(len(t0_alldipoles))
-    print(len(t0_alldipoles[0]))
+
+
 
 def compare_data(fnh5, fndat):
 
