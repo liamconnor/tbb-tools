@@ -358,7 +358,8 @@ class TBBh5_Reader():
   def __init__(self, fn):
     self.fn = fn
     self.nsubband_full = 512
-    self.delay_constant = 4148.808 
+    self.delay_constant = 4148.808
+    self.time_per_sample = 5.12e-6 
     h5_attrs = [u'DOC_VERSION',
                u'PROJECT_CO_I',
                u'FILETYPE',
@@ -437,7 +438,7 @@ class TBBh5_Reader():
         for sb in np.sort(station_group[dd].keys()):
           t0_int = station_group[dd][sb].attrs['TIME']
           slice0 = station_group[dd][sb].attrs['SLICE_NUMBER']
-          t0 = t0_int + 5.12e-6*slice0
+          t0 = t0_int + self.time_per_sample*slice0
           tarr.append(t0)
           #print(station_group[dd][sb].attrs.items())
 #        for sb in station_group.items()[-1][-1].keys():
@@ -454,7 +455,7 @@ class TBBh5_Reader():
         for sb in np.sort(station_group[dd].keys()):
           t0_int = station_group[dd][sb].attrs['TIME']
           slice0 = station_group[dd][sb].attrs['SLICE_NUMBER']
-          t0 = t0_int + 5.12e-6*slice0
+          t0 = t0_int + self.time_per_sample*slice0
           tarr.append(t0)
 
     return tarr
@@ -500,8 +501,8 @@ class TBBh5_Reader():
         try:
           t0_int = dipole_groups[sb_name].attrs['TIME']
           slice0 = dipole_groups[sb_name].attrs['SLICE_NUMBER']
-          t0 = t0_int + 5.12e-6*slice0
-          tarr = np.linspace(t0, t0+nsample*5.12e-6, nsample)
+          t0 = t0_int + self.time_per_sample*slice0
+          tarr = np.linspace(t0, t0+nsample*self.time_per_sample, nsample)
           t0_sb.append(t0)
         except:
           print("Could not get time data")
@@ -533,18 +534,24 @@ class TBBh5_Reader():
 
   def construct_fullband_arr(self, data_rcu, dipole_sb_map, 
                              nsample, nrcu, rcu_set, t0_alldipoles):
-    data_arr = np.empty([nrcu, self.nsubband_full, 2*nsample])
+
+    t0_min = t0_alldipoles.min()
+    t0_max = t0_alldipoles.max()
+    offset = int((t0_max - t0_min)/self.time_per_sample)
+
+    data_arr = np.empty([nrcu, self.nsubband_full, 2*(offset+nsample)])
 
     rcu_set = np.sort(rcu_set)
-    #print(int((t0_alldipoles.max() - t0_alldipoles.min())/5.12e-6))
+
     print(len(t0_alldipoles))
 
     for ii in range(len(dipole_sb_map)):
       sb = int(dipole_sb_map[ii][1][-3:])
       nsample_ii = len(data_rcu[ii])
       rcu_ind = np.where(rcu_set==dipole_sb_map[ii][0])[0][0]
-      print(t0_alldipoles[ii], dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
-      data_arr[rcu_ind, sb, :nsample_ii] = data_rcu[ii]
+      print(t0_alldipoles[ii] - t0_min, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
+      offset_ii = t0_alldipoles[ii] - t0_min)/self.time_per_sample
+      data_arr[rcu_ind, sb, offset_ii:offset_ii+nsample_ii] = data_rcu[ii]
 
     return data_arr
 
