@@ -509,6 +509,7 @@ class TBBh5_Reader():
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
 
+        print(sb_name, len(data_complex))
         data_rcu.append(data_complex)
 
         dipole_sb_map.append([dipole_name, sb_name])
