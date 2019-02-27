@@ -11,13 +11,28 @@ if __name__=='__main__':
     T = read_tbb_data.TBBh5_Reader(fn)
     station_name = list(set(T.get_stations_groups()[1]))
     data, mapping, tt = T.station_data(station_name[0])
-    tt = np.array(tt)
-    print(tt.shape)
-
+#    tt = np.array(tt)
     data_I = T.voltage_to_intensity(data)
 
     data_tf = data_I.mean(0)
-    
+#    t0 = tt[0, :, 0]
+    nfreq = data_tf.shape[0]
+    nframe = data_tf.shape[1]
+
+    for ii in range(nfreq):
+        plt.plot(2**ii*data_tf[ii])
+
+    plt.semilogy()
+    plt.show()
+
+#    index_diff = 1+(t0.max() - t0.min())//5.12e-6
+#    data_tf_full = np.zeros([nfreq, nframe+index_diff])
+
+#    for ii in range(0):
+#        continue
+#        offset = int((t0[ii]-t0.min())/5.12e-6)
+#        print(ii, offset, data_tf.shape)
+#        data_tf_full[ii, offset:offset+nframe] = data_tf[ii]
 
     fig = plt.figure()
     plt.plot(data_I.mean(0).mean(-1))
