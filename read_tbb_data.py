@@ -486,6 +486,7 @@ class TBBh5_Reader():
     dipole_sb_map = []
     t0_alldipoles = []
 
+    dk = 0
     for dipole_name in dipole_names:
       dipole_groups = stations_group[dipole_name]
       t0_sb = []
@@ -509,7 +510,10 @@ class TBBh5_Reader():
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
 
-        print(sb_name, len(data_complex))
+        if len(data_complex) != 389760:
+          print(sb_name, len(data_complex))
+
+        dk += 1
         data_rcu.append(data_complex)
 
         dipole_sb_map.append([dipole_name, sb_name])
