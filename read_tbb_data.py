@@ -519,7 +519,7 @@ class TBBh5_Reader():
 
     data_rcu = np.concatenate(data_rcu)  
 
-    self.construct_fullband_arr(data_rcu, dipole_sb_map, nsample)
+    self.construct_fullband_arr(data_rcu, dipole_sb_map, nsample, ncru)
 
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
@@ -529,11 +529,12 @@ class TBBh5_Reader():
     station_name = list(set(self.get_stations_groups()[1]))
     data, mapping, t0_alldipoles = T.station_data(station_name[0])
 
-  def construct_fullband_arr(self, data_rcu, dipole_sb_map, nsample):
-    #data_arr = np.empty([nrcu, self.nsubband_full, 2*nsample])
+  def construct_fullband_arr(self, data_rcu, dipole_sb_map, nsample, nrcu):
+    data_arr = np.empty([nrcu, self.nsubband_full, 2*nsample])
 
     for ii in range(len(dipole_sb_map)):
-      print(ii, dipole_sb_map[ii][0], dipole_sb_map[ii][1])
+      sb = int(dipole_sb_map[ii][1][-3:])
+      print(ii, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb)
 
 
 def compare_data(fnh5, fndat):
