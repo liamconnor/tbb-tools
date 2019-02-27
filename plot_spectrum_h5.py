@@ -19,11 +19,11 @@ if __name__=='__main__':
     nfreq = data_tf.shape[0]
     nframe = data_tf.shape[1]
 
-    for ii in range(nfreq):
-        plt.plot(2**ii*data_tf[ii])
+    # for ii in range(nfreq):
+    #     plt.plot(2**ii*data_tf[ii])
 
-    plt.semilogy()
-    plt.show()
+    # plt.semilogy()
+    # plt.show()
 
 #    index_diff = 1+(t0.max() - t0.min())//5.12e-6
 #    data_tf_full = np.zeros([nfreq, nframe+index_diff])
@@ -34,11 +34,12 @@ if __name__=='__main__':
 #        print(ii, offset, data_tf.shape)
 #        data_tf_full[ii, offset:offset+nframe] = data_tf[ii]
 
-    fig = plt.figure()
-    plt.plot(data_I.mean(0).mean(-1))
-    plt.semilogy()
-    plt.xlabel('subband number')
-    plt.ylabel('intensity')
+    # fig = plt.figure()
+    # plt.plot(data_I.mean(0).mean(-1))
+    # plt.semilogy()
+    # plt.xlabel('subband number')
+    # plt.ylabel('intensity')
+    # plt.show()
 
     fig2 = plt.figure()
     plt.imshow(np.log10(data_I.mean(0)), aspect='auto', cmap='Greys')
