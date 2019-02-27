@@ -511,8 +511,6 @@ class TBBh5_Reader():
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
 
-        print(sb_name, len(data_complex))
-
         data_rcu.append(data_complex)
 
         dipole_sb_map.append([dipole_name, sb_name])
@@ -532,7 +530,7 @@ class TBBh5_Reader():
     data, mapping, t0_alldipoles = T.station_data(station_name[0])
 
   def construct_fullband_arr(self, data_rcu, dipole_sb_map, nsample):
-    data_arr = np.empty([nrcu, self.nsubband_full, 2*nsample])
+    #data_arr = np.empty([nrcu, self.nsubband_full, 2*nsample])
 
     for ii in range(len(dipole_sb_map)):
       print(ii, dipole_sb_map[ii][0], dipole_sb_map[ii][1])
