@@ -519,7 +519,7 @@ class TBBh5_Reader():
 
     data_rcu = np.concatenate(data_rcu)  
 
-    self.construct_fullband_arr(data_rcu, dipole_sb_map, nsample, ncru)
+    self.construct_fullband_arr(data_rcu, dipole_sb_map, nsample, nrcu)
 
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
