@@ -538,10 +538,9 @@ class TBBh5_Reader():
     for ii in range(len(dipole_sb_map)):
       sb = int(dipole_sb_map[ii][1][-3:])
       nsample_ii = len(data_rcu[ii])
-      print(np.where(rcu_set==dipole_sb_map[ii][0]))
-      rcu_ind = np.where(dipole_sb_map[ii][0]==np.array(rcu_set))[0]
+      rcu_ind = np.where(rcu_set==dipole_sb_map[ii][0])[0][0]
       print(ii, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
-      data_arr[:, sb, :nsample_ii] = data_rcu[ii]
+      data_arr[rcu_ind, sb, :nsample_ii] = data_rcu[ii]
 
 def compare_data(fnh5, fndat):
 
