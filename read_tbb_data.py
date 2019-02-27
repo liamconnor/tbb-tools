@@ -510,8 +510,7 @@ class TBBh5_Reader():
         data_complex[::2] = data_r
         data_complex[1::2] = data_i 
 
-        if len(data_complex) != 389760:
-          print(sb_name, len(data_complex))
+        print(sb_name, len(data_complex))
 
         dk += 1
         data_rcu.append(data_complex)
@@ -520,11 +519,10 @@ class TBBh5_Reader():
         
       t0_alldipoles.append(t0_sb)
 
-    for zz in data_rcu:
-      print(zz.shape, dk)
-
     data_rcu = np.concatenate(data_rcu)  
+
     print(data_rcu.shape, nrcu, -1, 2*nsample)
+    print(dipole_sb_map)
     data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
 
     return data_rcu, dipole_sb_map, t0_alldipoles
