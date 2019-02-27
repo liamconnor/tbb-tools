@@ -512,7 +512,7 @@ class TBBh5_Reader():
         data_rcu.append(data_complex)
 
         dipole_sb_map.append([dipole_name, sb_name])
-        dk += 1
+        #dk += 1
         
       t0_alldipoles.append(t0_sb)
 
