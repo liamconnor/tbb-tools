@@ -550,7 +550,7 @@ class TBBh5_Reader():
       nsample_ii = len(data_rcu[ii])
       rcu_ind = np.where(rcu_set==dipole_sb_map[ii][0])[0][0]
       print(t0_alldipoles[ii] - t0_min, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
-      offset_ii = t0_alldipoles[ii] - t0_min)/self.time_per_sample
+      offset_ii = int((t0_alldipoles[ii] - t0_min)/self.time_per_sample)
       data_arr[rcu_ind, sb, offset_ii:offset_ii+nsample_ii] = data_rcu[ii]
 
     return data_arr
