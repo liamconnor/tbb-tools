@@ -502,7 +502,7 @@ class TBBh5_Reader():
           slice0 = dipole_groups[sb_name].attrs['SLICE_NUMBER']
           t0 = t0_int + 5.12e-6*slice0
           tarr = np.linspace(t0, t0+nsample*5.12e-6, nsample)
-          t0_sb.append(tarr)
+          t0_sb.append(t0)
         except:
           print("Could not get time data")
 
@@ -517,6 +517,7 @@ class TBBh5_Reader():
       t0_alldipoles.append(t0_sb)
 
     rcu_set = list(set(dipole_names))
+    t0_alldipoles = np.concatenate(t0_alldipoles)
 
     data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
                                            nsample, nrcu, rcu_set, t0_alldipoles)
@@ -542,7 +543,7 @@ class TBBh5_Reader():
       sb = int(dipole_sb_map[ii][1][-3:])
       nsample_ii = len(data_rcu[ii])
       rcu_ind = np.where(rcu_set==dipole_sb_map[ii][0])[0][0]
-      print(t0_alldipoles[ii], len(t0_alldipoles[ii]))#, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
+      print(t0_alldipoles[ii], dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
       data_arr[rcu_ind, sb, :nsample_ii] = data_rcu[ii]
 
     return data_arr
