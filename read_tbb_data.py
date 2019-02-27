@@ -502,7 +502,7 @@ class TBBh5_Reader():
           slice0 = dipole_groups[sb_name].attrs['SLICE_NUMBER']
           t0 = t0_int + 5.12e-6*slice0
           tarr = np.linspace(t0, t0+nsample*5.12e-6, nsample)
-          t0_sb.append(t0)
+          t0_sb.append(tarr)
         except:
           print("Could not get time data")
 
