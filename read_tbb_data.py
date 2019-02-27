@@ -514,7 +514,7 @@ class TBBh5_Reader():
 
         dipole_sb_map.append([dipole_name, sb_name])
         
-      t0_alldipoles.append(np.concatenate(t0_sb))
+      t0_alldipoles.append(t0_sb)
 
     rcu_set = list(set(dipole_names))
 
@@ -536,12 +536,13 @@ class TBBh5_Reader():
 
     rcu_set = np.sort(rcu_set)
     #print(int((t0_alldipoles.max() - t0_alldipoles.min())/5.12e-6))
+    print(len(t0_alldipoles))
 
     for ii in range(len(dipole_sb_map)):
       sb = int(dipole_sb_map[ii][1][-3:])
       nsample_ii = len(data_rcu[ii])
       rcu_ind = np.where(rcu_set==dipole_sb_map[ii][0])[0][0]
-      print(t0_alldipoles[ii])#, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
+      print(t0_alldipoles[ii], len(t0_alldipoles[ii]))#, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
       data_arr[rcu_ind, sb, :nsample_ii] = data_rcu[ii]
 
     return data_arr
