@@ -542,6 +542,8 @@ class TBBh5_Reader():
       print(ii, dipole_sb_map[ii][0], dipole_sb_map[ii][1], sb, rcu_ind)
       data_arr[rcu_ind, sb, :nsample_ii] = data_rcu[ii]
 
+    return data_arr
+
 def compare_data(fnh5, fndat):
 
   Traw = TBB_Rawdata('new')
