@@ -533,6 +533,7 @@ class TBBh5_Reader():
     data_arr = np.empty([nrcu, self.nsubband_full, 2*nsample])
 
     np.sort(rcu_set)
+    print(rcu_set)
 
     for ii in range(len(dipole_sb_map)):
       sb = int(dipole_sb_map[ii][1][-3:])
