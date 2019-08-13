@@ -12,6 +12,7 @@ if __name__=='__main__':
     station_name = list(set(T.get_stations_groups()[1]))
     data, mapping, tt = T.station_data(station_name[0])
 #    tt = np.array(tt)
+    print(data.shape)
     data_I = T.voltage_to_intensity(data)
 
     data_tf = data_I.mean(0)

@@ -410,9 +410,12 @@ class TBBh5_Reader():
         statname = 'STATION_%s' % stat[:5]
         stations_groups.append(f[statname])
         stations_list.append(statname)
-      except:
+      except:  
         continue
 
+    if len(stations_list)==0:
+        print("Could not find the correct station")
+ 
     return stations_groups, stations_list
 
   def get_rcus_present(self, station_group):
@@ -623,6 +626,7 @@ def lofar_usage_ICD_20227():
     # NOF_STATIONS
 
     return ICD_attrs 
+
 
 
 
