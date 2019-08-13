@@ -492,11 +492,11 @@ class TBBh5_Reader():
     t0_alldipoles = []
 
     for dipole_name in dipole_names:
+      print(dipole_name)
       dipole_groups = stations_group[dipole_name]
       t0_sb = []
 
-      for sb_name in np.sort(dipole_groups):
-        print(sb_name, dipole_name)
+      for sb_name in np.sort(dipole_groups)[:10]:
         data_r = dipole_groups[sb_name]['real']
         data_i = dipole_groups[sb_name]['imag']        
         
