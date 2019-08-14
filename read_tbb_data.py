@@ -515,6 +515,7 @@ class TBBh5_Reader():
           data_intensity = data_r**2 + data_i**2
           data_intensity = data_intensity.reshape(-1, 10).mean(-1)
           data_rcu.append(data_intensity)
+          self.time_per_sample *= 10
         else:
           data_complex = np.empty([2*nsample])
           data_complex[::2] = data_r
@@ -528,10 +529,15 @@ class TBBh5_Reader():
     rcu_set = list(set(dipole_names))
     t0_alldipoles = np.concatenate(t0_alldipoles)
     np.save('output_data', data_rcu)
-    print(data_rcu.shape, len(dipole_sb_map))    
-    exit()
+#    print(data_rcu.shape, len(dipole_sb_map))    
+#    exit()
+    if rebin:
+      nsample /= 2
+
     data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
                                            nsample, nrcu, rcu_set, t0_alldipoles)
+
+    np.save('fullarr', data_arr)
 
     #data_rcu = np.concatenate(data_rcu)  
     #data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
