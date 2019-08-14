@@ -536,7 +536,6 @@ class TBBh5_Reader():
 
     np.save('fullarr', data_rcu)
     np.save('dipole_sb_map', dipole_sb_map)
-    exit()
 
     data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
                                            nsample, nrcu, rcu_set, t0_alldipoles)
