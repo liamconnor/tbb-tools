@@ -471,7 +471,7 @@ class TBBh5_Reader():
 
     return data_arr_int
 
-  def station_data(self, station_name, rebin=False):
+  def station_data(self, station_name, rebin=True):
     """ Construct voltage array of all data 
     in given station. The output array will be 
     (nrcu, nsubband, nsamples). The dipole/SB map 
@@ -513,13 +513,13 @@ class TBBh5_Reader():
 
         if rebin:
           data_intensity = data_r**2 + data_i**2
+          data_intensity = data_intensity.reshape(-1, 10).mean(-1)
           data_rcu.append(data_intensity)
         else:
           data_complex = np.empty([2*nsample])
           data_complex[::2] = data_r
           data_complex[1::2] = data_i 
-
-        data_rcu.append(data_complex)
+          data_rcu.append(data_complex)
 
         dipole_sb_map.append([dipole_name, sb_name])
         
