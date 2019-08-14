@@ -471,7 +471,7 @@ class TBBh5_Reader():
 
     return data_arr_int
 
-  def station_data(self, station_name, rebin=True):
+  def station_data(self, station_name, rebin=1000):
     """ Construct voltage array of all data 
     in given station. The output array will be 
     (nrcu, nsubband, nsamples). The dipole/SB map 
@@ -511,9 +511,9 @@ class TBBh5_Reader():
         except:
           print("Could not get time data")
 
-        if rebin:
+        if rebin not None:
           data_intensity = data_r**2 + data_i**2
-          data_intensity = data_intensity.reshape(-1, 10).mean(-1)
+          data_intensity = data_intensity.reshape(-1, rebin).mean(-1)
           data_rcu.append(data_intensity)
         else:
           data_complex = np.empty([2*nsample])
@@ -530,9 +530,9 @@ class TBBh5_Reader():
     np.save('output_data', data_rcu)
 #    print(data_rcu.shape, len(dipole_sb_map))    
 #    exit()
-    if rebin:
+    if rebin not None:
       nsample /= 2
-      self.time_per_sample *= 10
+      self.time_per_sample *= rebin
 
     np.save('fullarr', data_rcu)
     np.save('dipole_sb_map', dipole_sb_map)
@@ -560,6 +560,8 @@ class TBBh5_Reader():
     t0_min = t0_alldipoles.min()
     t0_max = t0_alldipoles.max()
     print(t0_min, t0_max, self.time_per_sample)
+    print(nrcu, self.nsubband_full, 2*(offset+nsample))
+    exit()
     offset = int((t0_max - t0_min)/self.time_per_sample)
 
     data_arr = np.empty([nrcu, self.nsubband_full, 2*(offset+nsample)])
