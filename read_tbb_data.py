@@ -557,6 +557,7 @@ class TBBh5_Reader():
 
     t0_min = t0_alldipoles.min()
     t0_max = t0_alldipoles.max()
+    print(t0_min, t0_max, self.time_per_sample)
     offset = int((t0_max - t0_min)/self.time_per_sample)
 
     data_arr = np.empty([nrcu, self.nsubband_full, 2*(offset+nsample)])
