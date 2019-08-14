@@ -527,8 +527,8 @@ class TBBh5_Reader():
 
     rcu_set = list(set(dipole_names))
     t0_alldipoles = np.concatenate(t0_alldipoles)
-    print(data_complex.shape, len(dipole_sb_map))
     np.save('output_data', data_rcu)
+    print(data_rcu.shape, len(dipole_sb_map))    
     exit()
     data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
                                            nsample, nrcu, rcu_set, t0_alldipoles)
