@@ -511,7 +511,7 @@ class TBBh5_Reader():
         except:
           print("Could not get time data")
 
-        if rebin not None:
+        if rebin is not None:
           data_intensity = data_r**2 + data_i**2
           data_intensity = data_intensity.reshape(-1, rebin).mean(-1)
           data_rcu.append(data_intensity)
@@ -530,7 +530,7 @@ class TBBh5_Reader():
     np.save('output_data', data_rcu)
 #    print(data_rcu.shape, len(dipole_sb_map))    
 #    exit()
-    if rebin not None:
+    if rebin is not None:
       nsample /= 2
       self.time_per_sample *= rebin
 
