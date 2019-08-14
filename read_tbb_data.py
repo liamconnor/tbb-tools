@@ -521,11 +521,10 @@ class TBBh5_Reader():
         
       t0_alldipoles.append(t0_sb)
 
+      print(sb_name, data_rcu[0].shape, len(data_rcu))
+
     rcu_set = list(set(dipole_names))
     t0_alldipoles = np.concatenate(t0_alldipoles)
-
-    np.save('datahere', data_rcu)
-    exit() #hack
 
     data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
                                            nsample, nrcu, rcu_set, t0_alldipoles)
@@ -541,6 +540,10 @@ class TBBh5_Reader():
 
   def construct_fullband_arr(self, data_rcu, dipole_sb_map, 
                              nsample, nrcu, rcu_set, t0_alldipoles):
+    """ Take list of voltage data arrays len(data_rcu)=N_dipole_SBs, 
+    data_rcu[0].shape = 
+    """
+
 
     t0_min = t0_alldipoles.min()
     t0_max = t0_alldipoles.max()
@@ -549,8 +552,6 @@ class TBBh5_Reader():
     data_arr = np.empty([nrcu, self.nsubband_full, 2*(offset+nsample)])
 
     rcu_set = np.sort(rcu_set)
-
-    print(len(t0_alldipoles), data_arr.shape, 2*nsample)
 
     for ii in range(len(dipole_sb_map)):
       sb = int(dipole_sb_map[ii][1][-3:])
