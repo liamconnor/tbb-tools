@@ -471,6 +471,34 @@ class TBBh5_Reader():
 
     return data_arr_int
 
+  def sort_sb_dipoles(data_rcu, dipole_sb_map):
+
+    rcus = np.array(list(set(dipole_sb_map[:,0])))
+    rcus.sort()
+    ndipole = len(rcus)
+    ntime = len(data_rcu[0])
+
+    data_arr = np.zeros([480, ndipole, ntime])
+
+    kk = 0
+
+    for ii in range(len(dipole_sb_map)):
+      sb = dipole_sb_map[ii, 1]
+      rcu = dipole_sb_map[ii,0]
+
+      sb_ii = np.int(sb[-3:])
+      rcu_ii = np.where(rcus==rcu)[0]
+      data_arr[sb_ii, rcu_ii, :] = data_rcu[ii]
+      print(sb_ii, rcu_ii, data_rcu[ii].sum())
+
+    # for ii, sb in enumerate(dipole_sb_map[:,1]):
+    #   sb_ii = np.int(sb[-3:])
+    #   for jj, dip in enumerate(dipole_sb_map[:,0]):
+    #     kk += 1
+    #     data_arr[sb_ii, jj, :] = data_rcu[kk]
+
+    return data_arr, rcus, rcu
+
   def station_data(self, station_name, rebin=1000):
     """ Construct voltage array of all data 
     in given station. The output array will be 
