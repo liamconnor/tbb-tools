@@ -491,8 +491,8 @@ class TBBh5_Reader():
     dipole_sb_map = []
     t0_alldipoles = []
 
-    for zz, dipole_name in enumerate(dipole_names[:10]):
-      print("Dipole:%s Number:%d" % (dipole_name, zz))
+    for zz, dipole_name in enumerate(dipole_names[:]):
+      print("%s Number:%d" % (dipole_name, zz))
       dipole_groups = stations_group[dipole_name]
       t0_sb = []
 
