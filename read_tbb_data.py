@@ -515,7 +515,9 @@ class TBBh5_Reader():
           data_intensity = data_r**2 + data_i**2
           data_intensity = data_intensity.reshape(-1, 10).mean(-1)
           data_rcu.append(data_intensity)
+          print(self.time_per_sample)
           self.time_per_sample *= 10
+          print(self.time_per_sample)
         else:
           data_complex = np.empty([2*nsample])
           data_complex[::2] = data_r
