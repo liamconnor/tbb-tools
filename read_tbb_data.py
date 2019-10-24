@@ -606,18 +606,17 @@ class TBBh5_Reader():
     return data_arr
 
   def construct_dedispersed_arr(self, data_rcu, dipole_sb_map, 
-                                nsample, rcu_set):
+                                rcu_set):
     """ Take list of voltage data arrays len(data_rcu)=N_dipole_SBs, 
     data_rcu[0].shape = 
     """
     nrcu = len(rcu_set)
     ntmax = 0
-    for ii in len(dipole_sb_map):
+    for ii in range(len(dipole_sb_map)):
       nt = data_rcu[ii]
       if nt > ntmax:
         ntmax = nt 
 
-#    data_arr = np.empty([nrcu, self.nsubband_full, 2*(offset+nsample)])
     data_arr = np.empty([nrcu, self.nsubband_full, ntmax])
 
     rcu_set = np.sort(rcu_set)
