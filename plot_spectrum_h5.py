@@ -20,7 +20,7 @@ if __name__=='__main__':
     data, mapping, tt = T.station_data(station_name[0], nsubband_tot=10)
     #data_I = T.voltage_to_intensity(data)
 
-    print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data_arr.shape)))
+    print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data.shape)))
     print("Averaging over %s axis" % ax_dict[axis])
 
     data = data.mean(axis)
