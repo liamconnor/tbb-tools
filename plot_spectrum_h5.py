@@ -11,7 +11,7 @@ if __name__=='__main__':
     ax_dict = {0:'ndipole', 1:'subband', 2:'time'}
 
     try:
-        axis = sys.argv[2]
+        axis = int(sys.argv[2])
     except:
         axis = 0
 
