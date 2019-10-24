@@ -15,16 +15,13 @@ if __name__=='__main__':
     data, mapping, tt = T.station_data(station_name[0], nsubband_tot=10)
     #data_I = T.voltage_to_intensity(data)
 
-    print(sys.argv)
-    exit()
-
     try:
         axis = sys.argv[2]
         if axis is not 'all':
             axis = int(sys.argv[2])
     except:
         axis = 0
-
+    print(axis)
     if axis is not 'all':
         data = data.mean(axis)
         print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data.shape)))
