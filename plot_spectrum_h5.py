@@ -20,8 +20,10 @@ if __name__=='__main__':
     except:
         axis = 0
 
-    if axis is not 'all':
-        axis = int(sys.argv[2])
+    try:
+        axis = int(axis)
+    except:
+        pass 
 
     print(axis)
     if axis is not 'all':
