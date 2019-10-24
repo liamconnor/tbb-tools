@@ -49,7 +49,7 @@ if __name__=='__main__':
         plt.xlabel(xlab, fontsize=20)
         plt.show()
     else:
-        fig2 = plt.figure()
+        fig2 = plt.figure(figsize=(12,10))
         fig2.add_subplot(311)
         plt.imshow(np.log10(data.mean(0)), aspect='auto', cmap='Greys')
         plt.ylabel('SUBBAND', fontsize=20)
