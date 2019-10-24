@@ -561,13 +561,13 @@ class TBBh5_Reader():
       self.time_per_sample *= rebin
 #      data_arr = np.concatenate(data_rcu).reshape(len(dipole_names), nsubband, -1)
 
-      return data_rcu, rcu_set, dipole_sb_map
+#    np.save('fullarr', data_rcu)
+#    np.save('dipole_sb_map', dipole_sb_map)
 
-    np.save('fullarr', data_rcu)
-    np.save('dipole_sb_map', dipole_sb_map)
-
-    data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
-                                           nsample, nrcu, rcu_set, t0_alldipoles)
+#    data_arr = self.construct_fullband_arr(data_rcu, dipole_sb_map, 
+#                                           nsample, nrcu, rcu_set, t0_alldipoles)
+    data_arr = self.construct_dedispersed_arr(data_rcu, dipole_sb_map, 
+                                rcu_set)
 
     #data_rcu = np.concatenate(data_rcu)  
     #data_rcu = data_rcu.reshape(nrcu, -1, 2*nsample)
