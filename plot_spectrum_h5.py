@@ -8,14 +8,26 @@ import read_tbb_data
 if __name__=='__main__':
     fn = sys.argv[1]
 
+    ax_dict = {0:'ndipole', 1:'subband', 2:'time'}
+
+    try:
+        axis = sys.argv[2]
+    except:
+        axis = 0
+
     T = read_tbb_data.TBBh5_Reader(fn)
     station_name = list(set(T.get_stations_groups()[1]))
     data, mapping, tt = T.station_data(station_name[0])
-    data_I = T.voltage_to_intensity(data)
+    #data_I = T.voltage_to_intensity(data)
 
-    data_tf = data_I.mean(0)
-    nfreq = data_tf.shape[0]
-    nframe = data_tf.shape[1]
+    print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data_arr.shape)))
+    print("Averaging over %s axis" % ax_dict[axis])
+
+    data = data.mean(axis)
+
+    #data_tf = data_I.mean(0)
+    #nfreq = data_tf.shape[0]
+    #nframe = data_tf.shape[1]
 
     # for ii in range(nfreq):
     #     plt.plot(2**ii*data_tf[ii])
@@ -40,9 +52,9 @@ if __name__=='__main__':
     # plt.show()
 
     fig2 = plt.figure()
-    plt.imshow(np.log10(data_I.mean(0)), aspect='auto', cmap='Greys')
-    plt.ylabel('subband number')
-    plt.xlabel('time')
+    plt.imshow(np.log10(data), aspect='auto', cmap='Greys')
+#    plt.ylabel('subband number')
+#    plt.xlabel('time')
     plt.show()
     
 #    times = T.get_time_arr(fn)
