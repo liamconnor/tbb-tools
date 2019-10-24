@@ -7,6 +7,7 @@ import read_tbb_data
 
 if __name__=='__main__':
     fn = sys.argv[1]
+    axis = sys.argv[2]
 
     ax_dict = {0:'ndipole', 1:'subband', 2:'time'}
 
@@ -20,11 +21,12 @@ if __name__=='__main__':
             axis = int(sys.argv[2])
         except:
             axis = 0
+
         data = data.mean(axis)
 
         print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data.shape)))
         print("Averaging over %s axis" % ax_dict[axis])
-
+    elif 
 
     if axis==0:
         ylab = 'SUBBAND'
