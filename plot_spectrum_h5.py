@@ -17,10 +17,12 @@ if __name__=='__main__':
 
     try:
         axis = sys.argv[2]
-        if axis is not 'all':
-            axis = int(sys.argv[2])
     except:
         axis = 0
+
+    if axis is not 'all':
+        axis = int(sys.argv[2])
+
     print(axis)
     if axis is not 'all':
         data = data.mean(axis)
