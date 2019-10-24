@@ -498,7 +498,7 @@ class TBBh5_Reader():
 
     return data_arr, rcus, rcu
 
-  def station_data(self, station_name, rebin=1000):
+  def station_data(self, station_name, rebin=480):
     """ Construct voltage array of all data 
     in given station. The output array will be 
     (nrcu, nsubband, nsamples). The dipole/SB map 
