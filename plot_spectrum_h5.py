@@ -42,7 +42,7 @@ if __name__=='__main__':
         ylab = 'DIPOLE INDEX'
         xlab = 'SUBBAND'     
 
-    if axis is not 'all':
+    if type(axis)==int:
         fig2 = plt.figure()
         plt.imshow(np.log10(data), aspect='auto', cmap='Greys')
         plt.ylabel(ylab, fontsize=20)
