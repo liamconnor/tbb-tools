@@ -540,7 +540,7 @@ class TBBh5_Reader():
 
         if rebin is not None:
           data_intensity = data_r**2 + data_i**2
-          data_intensity = data_intensity.reshape(-1, rebin).mean(-1)
+          data_intensity = data_intensity[:len(data_intensity)//rebin*rebin].reshape(-1, rebin).mean(-1)
           data_rcu.append(data_intensity)
         else:
           data_complex = np.empty([2*nsample])
