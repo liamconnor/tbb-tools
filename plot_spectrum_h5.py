@@ -25,36 +25,20 @@ if __name__=='__main__':
 
     data = data.mean(axis)
 
-    #data_tf = data_I.mean(0)
-    #nfreq = data_tf.shape[0]
-    #nframe = data_tf.shape[1]
-
-    # for ii in range(nfreq):
-    #     plt.plot(2**ii*data_tf[ii])
-
-    # plt.semilogy()
-    # plt.show()
-
-#    index_diff = 1+(t0.max() - t0.min())//5.12e-6
-#    data_tf_full = np.zeros([nfreq, nframe+index_diff])
-
-#    for ii in range(0):
-#        continue
-#        offset = int((t0[ii]-t0.min())/5.12e-6)
-#        print(ii, offset, data_tf.shape)
-#        data_tf_full[ii, offset:offset+nframe] = data_tf[ii]
-
-    # fig = plt.figure()
-    # plt.plot(data_I.mean(0).mean(-1))
-    # plt.semilogy()
-    # plt.xlabel('subband number')
-    # plt.ylabel('intensity')
-    # plt.show()
+    if axis==0:
+        ylab = 'SUBBAND'
+        xlab = 'TIME [rebinned samples]'
+    if axis==1:
+        ylab = 'DIPOLE INDEX'
+        xlab = 'TIME [rebinned samples]'        
+    if axis==2:
+        ylab = 'DIPOLE INDEX'
+        xlab = 'SUBBAND'     
 
     fig2 = plt.figure()
     plt.imshow(np.log10(data), aspect='auto', cmap='Greys')
-#    plt.ylabel('subband number')
-#    plt.xlabel('time')
+    plt.ylabel(ylab)
+    plt.xlabel(xlab)
     plt.show()
     
 #    times = T.get_time_arr(fn)
