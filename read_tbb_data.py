@@ -489,7 +489,6 @@ class TBBh5_Reader():
       sb_ii = np.int(sb[-3:])
       rcu_ii = np.where(rcus==rcu)[0]
       data_arr[sb_ii, rcu_ii, :] = data_rcu[ii]
-      print(sb_ii, rcu_ii, data_rcu[ii].sum())
 
     # for ii, sb in enumerate(dipole_sb_map[:,1]):
     #   sb_ii = np.int(sb[-3:])
