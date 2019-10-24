@@ -554,12 +554,14 @@ class TBBh5_Reader():
 
     rcu_set = list(set(dipole_names))
     t0_alldipoles = np.concatenate(t0_alldipoles)
-    np.save('output_data', data_rcu)
 #    print(data_rcu.shape, len(dipole_sb_map))    
 #    exit()
     if rebin is not None:
       nsample /= 2
       self.time_per_sample *= rebin
+#      data_arr = np.concatenate(data_rcu).reshape(len(dipole_names), nsubband, -1)
+
+      return data_rcu, rcu_set, dipole_sb_map
 
     np.save('fullarr', data_rcu)
     np.save('dipole_sb_map', dipole_sb_map)
