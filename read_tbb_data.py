@@ -605,6 +605,39 @@ class TBBh5_Reader():
 
     return data_arr
 
+  def construct_dedispersed_arr(self, data_rcu, dipole_sb_map, 
+                                nsample, nrcu, rcu_set, t0_alldipoles):
+    """ Take list of voltage data arrays len(data_rcu)=N_dipole_SBs, 
+    data_rcu[0].shape = 
+    """
+
+
+    t0_min = t0_alldipoles.min()
+    t0_max = t0_alldipoles.max()
+    print(t0_min, t0_max, self.time_per_sample)
+    print(nrcu, self.nsubband_full, 2*(offset+nsample))
+    exit()
+    offset = int((t0_max - t0_min)/self.time_per_sample)
+
+    ntmax = 0
+    for ii in len(dipole_sb_map):
+      nt = data_rcu[ii]
+      if nt > ntmax:
+        ntmax = nt 
+
+#    data_arr = np.empty([nrcu, self.nsubband_full, 2*(offset+nsample)])
+    data_arr = np.empty([nrcu, self.nsubband_full, ntmax])
+
+    rcu_set = np.sort(rcu_set)
+
+    for ii in range(len(dipole_sb_map)):
+      sb = int(dipole_sb_map[ii][1][-3:])
+      nsample_ii = len(data_rcu[ii])
+      rcu_ind = np.where(rcu_set==dipole_sb_map[ii][0])[0][0]
+      data_arr[rcu_ind, sb, :nsample_ii] = data_rcu[ii]
+
+    return data_arr
+
 def compare_data(fnh5, fndat):
 
   Traw = TBB_Rawdata('new')
