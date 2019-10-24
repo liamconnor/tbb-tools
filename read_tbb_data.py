@@ -613,7 +613,7 @@ class TBBh5_Reader():
     nrcu = len(rcu_set)
     ntmax = 0
     for ii in range(len(dipole_sb_map)):
-      nt = data_rcu[ii]
+      nt = len(data_rcu[ii])
       if nt > ntmax:
         ntmax = nt 
 
