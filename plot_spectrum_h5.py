@@ -26,7 +26,6 @@ if __name__=='__main__':
 
         print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data.shape)))
         print("Averaging over %s axis" % ax_dict[axis])
-    elif 
 
     if axis==0:
         ylab = 'SUBBAND'
