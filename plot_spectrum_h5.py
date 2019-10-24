@@ -7,7 +7,6 @@ import read_tbb_data
 
 if __name__=='__main__':
     fn = sys.argv[1]
-    axis = sys.argv[2]
 
     ax_dict = {0:'ndipole', 1:'subband', 2:'time'}
 
