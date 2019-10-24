@@ -17,7 +17,7 @@ if __name__=='__main__':
 
     T = read_tbb_data.TBBh5_Reader(fn)
     station_name = list(set(T.get_stations_groups()[1]))
-    data, mapping, tt = T.station_data(station_name[0], nsubband_tot=10)
+    data, mapping, tt = T.station_data(station_name[0], nsubband_tot=None)
     #data_I = T.voltage_to_intensity(data)
 
     print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data.shape)))
@@ -37,8 +37,8 @@ if __name__=='__main__':
 
     fig2 = plt.figure()
     plt.imshow(np.log10(data), aspect='auto', cmap='Greys')
-    plt.ylabel(ylab)
-    plt.xlabel(xlab)
+    plt.ylabel(ylab, fontsize=20)
+    plt.xlabel(xlab, fontsize=20)
     plt.show()
     
 #    times = T.get_time_arr(fn)
