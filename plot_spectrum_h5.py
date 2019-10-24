@@ -15,6 +15,9 @@ if __name__=='__main__':
     data, mapping, tt = T.station_data(station_name[0], nsubband_tot=10)
     #data_I = T.voltage_to_intensity(data)
 
+    print(sys.argv)
+    exit()
+
     try:
         axis = sys.argv[2]
         if axis is not 'all':
