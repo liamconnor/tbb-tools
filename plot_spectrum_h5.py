@@ -26,7 +26,8 @@ if __name__=='__main__':
         pass 
 
     print(axis)
-    if axis is not 'all':
+
+    if type(axis)==int:
         data = data.mean(axis)
         print("Data array shape is (ndipole, nsubband, nsample)=%s" % str((data.shape)))
         print("Averaging over %s axis" % ax_dict[axis])
