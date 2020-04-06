@@ -33,13 +33,19 @@ def read_h5(fn, time_range=(0,5)):
     """
     file = h5py.File(fn, 'r')
     start_time_file=datetime.strptime(file.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
+    end_time_file=datetime.strptime(file.attrs[u'OBSERVATION_END_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
+    start_time_file_unix=time.mktime(start_time_file.timetuple())
+    end_time_file_unix=time.mktime(end_time_file.timetuple())
+    print("Unix times in file: %d-%d" % (start_time_file_unix, end_time_file_unix))
 
     if len(time_range)==1:
         print("Assuming unix time %s" % time_range[0])
-        start_time_file_unix=time.mktime(start_time_file.timetuple())
         startsec=time_range[0]-start_time_file_unix
         endsec=startsec+5
         print(start_time_file_unix, time_range[0], startsec, endsec)
+        if startsec>=(end_time_file_unix-start_time_file_unix):
+            print("That unix time is not in the file")
+            exit()
     elif len(time_range)==2:
         startsec, endsec = time_range
 
