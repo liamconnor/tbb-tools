@@ -157,8 +157,7 @@ if __name__ == '__main__':
                         help='Make plots along the way', action='store_true')
 
     inputs = parser.parse_args()
-    print(inputs.times)
-    exit()
+    startsec, endsec = inputs.times[0], inputs.times[1]
 
     data, timeres, freqaxis = read_h5(inputs.fn, startsec, endsec, tint=1, fint=1)
 
