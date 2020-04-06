@@ -21,7 +21,8 @@ def read_h5(fn, startsec, endsec):
     endsec : float 
         number of seconds into file of end sample
 
-
+    Returns:
+    -------
     data : ndarray
         (nfreq, ntime) intensity array
     timeres : float 
@@ -39,11 +40,12 @@ def read_h5(fn, startsec, endsec):
     data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
     ntime,nfreq=data.shape
     nsamples=endsample-startsample
+    time_arr = np.linspace(startsec,endsec,ntime)
     # data3=np.sum(data.reshape(nsamples/tint,tint,nfreq),axis=1)
     # data3=np.sum(data3.reshape(nsamples/tint,nfreq/fint,fint),axis=2)
     # timeres *= tint 
     # freqaxis = freqaxis[fint//2::fint]
-    # time_arr = np.linspace(startsec,endsec,data3.shape[0])
+    # 
     #data3 = data3.T
 
     return data.T, timeres, time_arr, freqaxis
