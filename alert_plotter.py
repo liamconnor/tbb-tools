@@ -155,7 +155,6 @@ if __name__ == '__main__':
                         help='Make plots along the way', action='store_true')
 
     inputs = parser.parse_args()
-    obs_name = inputs.basedir.split('/')[4]
 
     data, timeres, freqaxis = read_h5(fn, startsec, endsec, tint=1, fint=1)
 
