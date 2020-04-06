@@ -87,8 +87,10 @@ def plot_dedisp(data_dd, time_arr=None, dm=0):
         xlab_ = 'Time (sample)'
     else:
         xlab_ = 'Time (sec)'
+
     dd_ts = data_dd.mean(0)
     fig = plt.figure()
+    print(times_arr.shape, dd_ts.shape)
     plt.plot(time_arr, dd_ts)
     plt.xlabel(xlab_, fontsize=16)
     plt.legend(['Freq-avg time series DM=%0.2f'%dm])
@@ -179,6 +181,7 @@ if __name__ == '__main__':
         time_arr = time_arr[inputs.tint//2::inputs.tint]
         freqaxis = freqaxis[inputs.fint//2::inputs.fint]
     if inputs.plot_all:
+        print(time_arr.shape, freqaxis.shape, data.shape)
         plot_im(data, time_arr, vmax=3, vmin=-2)
         plot_dedisp(data, time_arr, dm=inputs.dm)
 
