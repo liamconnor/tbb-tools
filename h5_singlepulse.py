@@ -113,7 +113,7 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
      data = file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
      data /= 1e12
      data *= 50
-     data = data.astype(int8)
+     data = data.astype(np.int8)
 
      if len(data)==0:
           print("Empty data")
