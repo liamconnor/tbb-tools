@@ -66,7 +66,7 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
         extent = [0, ntime, freq[0],freq[-1]]
         xlab_ = 'Time (sample)'
     else:
-        extent = [time_arr[0],time_arr[1],freqaxis[0],freqaxis[-1]]
+        extent = [time_arr[0],time_arr[1],freq[0],freq[-1]]
         xlab_ = 'Time (sec)'
 
     data_[data_==0] = np.inf
