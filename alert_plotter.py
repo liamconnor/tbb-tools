@@ -44,10 +44,13 @@ def read_h5(fn, startsec, endsec):
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
     data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
+    if len(data)==0:
+        print("No data in specified range")
+        exit()
     ntime,nfreq=data.shape
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
-    print(data)
+
 
     return data.T, timeres, time_arr, freqaxis
 
