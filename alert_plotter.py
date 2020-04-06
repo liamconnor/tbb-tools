@@ -74,6 +74,11 @@ def rebin_tf(data, tint=1, fint=1):
 
     return data_
 
+def read_npy(fn, startsec, endsec):
+    data = np.load(fn)
+
+    return data
+
 def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
             taxis=1, vmax=3, vmin=-2):
     """ Plot the 2D time/freq data. Freq is in Hz. vmax and 
@@ -103,6 +108,7 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
                extent=extent, cmap='hot')
     plt.xlabel(xlab_, fontsize=16)
     plt.ylabel('Freq', fontsize=16)
+    plt.colorbar()
     plt.show()
 
 def plot_dedisp(data_dd, time_arr=None, dm=0):
@@ -220,7 +226,13 @@ if __name__ == '__main__':
     inputs = parser.parse_args()
     startsec, endsec = inputs.times[0], inputs.times[1]
 
-    data, timeres, time_arr, freqaxis = read_h5(inputs.fn, startsec, endsec)
+    if inputs.fn[-2:]=='h5':
+        data, timeres, time_arr, freqaxis = read_h5(inputs.fn, startsec, endsec)
+        ftype='h5'
+    elif inputs.fn[-3:]=='npy':
+        data = read_npy(inputs.fn)
+        ftype='npy'
+
 
     # RFI clean data by zapping bad channels
     if inputs.rfi:
