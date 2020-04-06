@@ -32,10 +32,10 @@ def read_h5(fn, time_range=(0,5)):
         frequency array in Hz
     """
     file = h5py.File(fn, 'r')
+    start_time_file=datetime.strptime(file.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
 
     if len(time_range)==1:
         print("Assuming unix time %s" % time_range[0])
-        start_time_file=datetime.strptime(file.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
         start_time_file_unix=time.mktime(start_time_file.timetuple())
         startsec=start_time_file_unix-time_range[0]
         endsec=startsec+5
@@ -60,7 +60,7 @@ def read_h5(fn, time_range=(0,5)):
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
 
-    return data.T, timeres, time_arr, freqaxis, start_time
+    return data.T, timeres, time_arr, freqaxis, start_time_file
 
 def rebin_tf(data, tint=1, fint=1):
     """ Rebin in time and frequency accounting 
