@@ -178,8 +178,8 @@ if __name__ == '__main__':
         data = dedisperse(data, dm, freq=freqaxis, timeres=timeres)
     if inputs.fint>1 or inputs.tint>1:
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
-        time_arr = time_arr[inputs.tint//2::inputs.tint]
-        freqaxis = freqaxis[inputs.fint//2::inputs.fint]
+        time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
+        freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
     if inputs.plot_all:
         print(time_arr.shape, freqaxis.shape, data.shape)
         plot_im(data, time_arr, vmax=3, vmin=-2)
