@@ -43,7 +43,7 @@ def read_h5(fn, time_range=(0,5)):
         startsec=time_range[0]-start_time_file_unix
         endsec=startsec+5
         print(start_time_file_unix, time_range[0], startsec, endsec)
-        if startsec>=(end_time_file_unix-start_time_file_unix):
+        if startsec>=np.abs(end_time_file_unix-start_time_file_unix):
             print("That unix time is not in the file")
             exit()
     elif len(time_range)==2:
