@@ -162,6 +162,8 @@ if __name__ == '__main__':
                         default=1, type=int)
     parser.add_argument('-dm', '--dm', help='dispersion measure', 
                         default=0, type=float)
+    parser.add_argument('-s', '--save_data', help='save data to .npy',
+                        action='store_true')
     parser.add_argument('-T', '--times', help='start and end time in seconds', nargs=2,
                         type=float, default=(0,5))
     parser.add_argument('-p', '--plot_all', 
@@ -184,6 +186,10 @@ if __name__ == '__main__':
         print(time_arr.shape, freqaxis.shape, data.shape)
         plot_im(data, time_arr, vmax=3, vmin=-2)
         plot_dedisp(data, time_arr, dm=inputs.dm)
+    if inputs.save_data:
+        np.save(fn.strip('.h5')+'_DM%0.2f.npy' % inputs.dm, data)
+        np.save(fn.strip('.h5')+'timeseries_DM%0.2f.npy' % inputs.dm, data.mean(0))
+
 
 
 
