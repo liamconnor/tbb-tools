@@ -51,7 +51,6 @@ def read_h5(fn, startsec, endsec):
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
 
-
     return data.T, timeres, time_arr, freqaxis
 
 def rebin_tf(data, tint=1, fint=1):
@@ -222,13 +221,18 @@ if __name__ == '__main__':
                         default=0, type=float)
     parser.add_argument('-s', '--save_data', help='save data to .npy',
                         action='store_true')
-    parser.add_argument('-T', '--times', help='start and end time in seconds', nargs=2,
+    parser.add_argument('-T', '--times', help='start and end time in seconds', nargs='+',
                         type=float, default=(0,5))
     parser.add_argument('-p', '--plot_all', 
                         help='Make plots along the way', action='store_true')
 
     inputs = parser.parse_args()
-    startsec, endsec = inputs.times[0], inputs.times[1]
+
+    if len(inputs.times)==2:
+        startsec, endsec = inputs.times[0], inputs.times[1]
+    elif len(inputs.times)==1:
+        startsec = inputs.times
+        endsec = startsec + 5.0
 
     if inputs.fn[-2:]=='h5':
         data, timeres, time_arr, freqaxis = read_h5(inputs.fn, startsec, endsec)
