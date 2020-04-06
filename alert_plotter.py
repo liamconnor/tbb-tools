@@ -63,7 +63,7 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
     data_ /= np.std(data_)
 
     if time_arr is None:
-        extent = [0, ntime, freq[0],freq[-1]]
+        extent = [0, ntime, freq[0], freq[-1]]
         xlab_ = 'Time (sample)'
     else:
         extent = [time_arr[0],time_arr[1],freq[0],freq[-1]]
@@ -177,8 +177,8 @@ if __name__ == '__main__':
     if inputs.fint>1 or inputs.tint>1:
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
     if inputs.plot_all:
-        plot_im(data, timeres, vmax=3, vmin=-2)
-        plot_dd(data, timeres)
+        plot_im(data, time_arr, vmax=3, vmin=-2)
+        plot_dd(data, time_arr)
 
 
 
