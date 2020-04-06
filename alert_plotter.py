@@ -151,12 +151,16 @@ if __name__ == '__main__':
                         default=1, type=int)
     parser.add_argument('-dm', '--dm', help='dispersion measure', 
                         default=0, type=float)
+    parser.add_argument('-T', '--times', help='start and end time in seconds', nargs=2,
+                        type=float, default=(0,5))
     parser.add_argument('-p', '--plot_all', 
                         help='Make plots along the way', action='store_true')
 
     inputs = parser.parse_args()
+    print(inputs.times)
+    exit()
 
-    data, timeres, freqaxis = read_h5(fn, startsec, endsec, tint=1, fint=1)
+    data, timeres, freqaxis = read_h5(inputs.fn, startsec, endsec, tint=1, fint=1)
 
     if inputs.rfi:
         data, ind_use, mask = dumb_clean(data, plot_clean=True)
