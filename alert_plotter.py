@@ -162,14 +162,7 @@ if __name__ == '__main__':
     inputs = parser.parse_args()
     startsec, endsec = inputs.times[0], inputs.times[1]
 
-    fdir = '/'.join(inputs.fn.split('/')[:-1])
-    print(fdir)
-    print(inputs.fn)
-    os.system('cd %s' % fdir)
-    fn = inputs.fn.split('/')[-1]
-    print('./'+fn)
-    os.system('pwd')
-    data, timeres, freqaxis = read_h5('./'+fn, startsec, endsec, tint=1, fint=1)
+    data, timeres, freqaxis = read_h5(inputs.fn, startsec, endsec, tint=1, fint=1)
 
     if inputs.rfi:
         data, ind_use, mask = dumb_clean(data, plot_clean=True)
