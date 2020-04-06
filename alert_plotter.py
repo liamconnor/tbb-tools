@@ -38,7 +38,7 @@ def read_h5(fn, time_range=(0,5)):
 
     if len(time_range)==1:
         print("Assuming unix time %s" % time_range[0])
-        start_time_file=datetime.strptime(f.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
+        start_time_file=datetime.strptime(file.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
         start_time_file_unix=time.mktime(start_time.timetuple())
         startsec=start_time_file_unix-time_range[0]
         endsec=startsec+5
