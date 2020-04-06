@@ -273,7 +273,7 @@ if __name__ == '__main__':
         data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
-        data = dedisperse(data, dm, freq=freqaxis, timeres=timeres)
+        data = dedisperse(data, inputs.dm, freq=freqaxis, timeres=timeres)
     # Downsample / channelize data
     if inputs.fint>1 or inputs.tint>1:
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
@@ -287,12 +287,6 @@ if __name__ == '__main__':
     if inputs.save_data:
         np.save(fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
         np.save(fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
-
-
-
-
-
-
 
 
 
