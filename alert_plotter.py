@@ -60,7 +60,7 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
     nfreq, ntime = data.shape
     print("Plotter: Assuming nfreq: %d and ntime: %d" % (nfreq, ntime))
     data_ -= np.mean(data_,axis=-1,keepdims=True)
-    data_ /= np.std(data_)
+    data_ /= np.std(data_, axis=-1, keepdims=True)
 
     if time_arr is None:
         extent = [0, ntime, freq[0], freq[-1]]
@@ -89,7 +89,7 @@ def plot_dedisp(data_dd, time_arr=None, dm=0):
         xlab_ = 'Time (sec)'
     dd_ts = data_dd.mean(0)
     fig = plt.figure()
-    plt.plot(time_arr, dd_ts.mean(0))
+    plt.plot(time_arr, dd_ts)
     plt.xlabel(xlab_, fontsize=16)
     plt.legend(['Freq-avg time series DM=%0.2f'%dm])
     plt.show()
@@ -118,7 +118,6 @@ def dedisperse(data, dm, timeres=4.9152e-4,
     maxind_arr = []
 
     for ii, f in enumerate(freq_arr):
-        print(ii, f, tdelay[ii])
         data[ii] = np.roll(data[ii], -np.int(tdelay[ii]/timeres))
 
     return data
