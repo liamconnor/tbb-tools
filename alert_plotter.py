@@ -7,9 +7,6 @@ import h5py
 from datetime import datetime, timedelta
 import time 
 
-startsec, endsec=0, 5
-dm = 26.8
-
 def read_h5(fn, time_range=(0,5)):
     """ Read in hdf5 beamformed data at native resolution.
     Transpose data to (nfreq, ntime)
@@ -39,7 +36,7 @@ def read_h5(fn, time_range=(0,5)):
     if len(time_range)==1:
         print("Assuming unix time %s" % time_range[0])
         start_time_file=datetime.strptime(file.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
-        start_time_file_unix=time.mktime(start_time.timetuple())
+        start_time_file_unix=time.mktime(start_time_file.timetuple())
         startsec=start_time_file_unix-time_range[0]
         endsec=startsec+5
     elif len(time_range)==2:
