@@ -36,7 +36,7 @@ def read_h5(fn, startsec, endsec):
     if endsec<=startsec:
         print("Start time is larger than end time")
         exit()
-    elif endsec-startsec>25.0:
+    elif endsec-startsec>30.0:
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
     timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
@@ -236,6 +236,12 @@ if __name__ == '__main__':
     elif inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
         ftype='npy'
+        if inputs.rfi:
+            data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
+        if inputs.plot_all:
+            plot_im(data, vmax=3, vmin=-2)
+            plot_dedisp(data, dm=inputs.dm)
+        exit()
 
     # RFI clean data by zapping bad channels
     if inputs.rfi:
