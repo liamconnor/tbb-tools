@@ -78,7 +78,7 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
     plt.ylabel('Freq', fontsize=16)
     plt.show()
 
-def plot_dedisp(data_dd, time_arr=None):
+def plot_dedisp(data_dd, time_arr=None, dm=0):
     """ Visualize dedispersed data
     """
     nfreq,ntime = data_dd.shape
@@ -91,6 +91,7 @@ def plot_dedisp(data_dd, time_arr=None):
     fig = plt.figure()
     plt.plot(time_arr, dd_ts.mean(0))
     plt.xlabel(xlab_, fontsize=16)
+    plt.legend(['Freq-avg time series DM=%0.2f'%dm])
     plt.show()
 
 def dedisperse(data, dm, timeres=4.9152e-4, 
@@ -178,7 +179,7 @@ if __name__ == '__main__':
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
     if inputs.plot_all:
         plot_im(data, time_arr, vmax=3, vmin=-2)
-        plot_dd(data, time_arr)
+        plot_dedisp(data, time_arr, dm=inputs.dm)
 
 
 
