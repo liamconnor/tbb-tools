@@ -41,12 +41,6 @@ def read_h5(fn, startsec, endsec):
     ntime,nfreq=data.shape
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
-    # data3=np.sum(data.reshape(nsamples/tint,tint,nfreq),axis=1)
-    # data3=np.sum(data3.reshape(nsamples/tint,nfreq/fint,fint),axis=2)
-    # timeres *= tint 
-    # freqaxis = freqaxis[fint//2::fint]
-    # 
-    #data3 = data3.T
 
     return data.T, timeres, time_arr, freqaxis
 
