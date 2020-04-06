@@ -236,7 +236,8 @@ if __name__ == '__main__':
                         default=0, type=float)
     parser.add_argument('-s', '--save_data', help='save data to .npy',
                         action='store_true')
-    parser.add_argument('-T', '--times', help='start and end time in seconds', nargs='+',
+    parser.add_argument('-T', '--times', 
+                        help='start end times in sec or unix time', nargs='+',
                         type=float, default=(0,5.0))
     parser.add_argument('-p', '--plot_all', 
                         help='Make plots along the way', action='store_true')
