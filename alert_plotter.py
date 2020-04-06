@@ -78,7 +78,7 @@ def rebin_tf(data, tint=1, fint=1):
 
     return data_
 
-def read_npy(fn, startsec, endsec):
+def read_npy(fn):
     data = np.load(fn)
 
     return data
