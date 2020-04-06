@@ -176,6 +176,8 @@ if __name__ == '__main__':
         data = dedisperse(data, dm, freq=freqaxis, timeres=timeres)
     if inputs.fint>1 or inputs.tint>1:
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
+        time_arr = time_arr[inputs.tint//2::inputs.tint]
+        freqaxis = freqaxis[inputs.fint//2::inputs.fint]
     if inputs.plot_all:
         plot_im(data, time_arr, vmax=3, vmin=-2)
         plot_dedisp(data, time_arr, dm=inputs.dm)
