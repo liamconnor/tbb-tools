@@ -238,6 +238,10 @@ if __name__ == '__main__':
         ftype='npy'
         if inputs.rfi:
             data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
+        if inputs.fint>1 or inputs.tint>1:
+            data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
+            time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
+            freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
         if inputs.plot_all:
             plot_im(data, vmax=3, vmin=-2)
             plot_dedisp(data, dm=inputs.dm)
@@ -260,8 +264,8 @@ if __name__ == '__main__':
         plot_dedisp(data, time_arr, dm=inputs.dm)
     # Save data to numpy arrays
     if inputs.save_data:
-        np.save(fn.strip('.h5')+'_DM%0.2f.npy' % inputs.dm, data)
-        np.save(fn.strip('.h5')+'timeseries_DM%0.2f.npy' % inputs.dm, data.mean(0))
+        np.save(fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
+        np.save(fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
 
 
