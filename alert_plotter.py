@@ -8,23 +8,45 @@ import h5py
 startsec, endsec=0, 5
 dm = 26.8 
 
-def read_h5(fn, startsec, endsec, tint=1, fint=1):
+def read_h5(fn, startsec, endsec):
+    """ Read in hdf5 beamformed data at native resolution.
+    Transpose data to (nfreq, ntime)
+
+    Parameters:
+    ----------
+    fn : str 
+        path to .h5 file 
+    startsec : float 
+        number of second into file of start sample
+    endsec : float 
+        number of seconds into file of end sample
+
+
+    data : ndarray
+        (nfreq, ntime) intensity array
+    timeres : float 
+        time resolution of data 
+    time_arr : ndarray 
+        ntime length array of time samples w.r.t. start of file
+    freqaxis : ndarray 
+        frequency array in Hz
+    """
     file = h5py.File(fn, 'r')
     timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
     freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
-    startsample=(int(startsec/timeres)/tint)*tint
-    endsample=(int(endsec/timeres)/tint)*tint
+    startsample=int(startsec/timeres)
+    endsample=int(endsec/timeres)
     data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
     ntime,nfreq=data.shape
     nsamples=endsample-startsample
-    data3=np.sum(data.reshape(nsamples/tint,tint,nfreq),axis=1)
-    data3=np.sum(data3.reshape(nsamples/tint,nfreq/fint,fint),axis=2)
-    timeres *= tint 
-    freqaxis = freqaxis[fint//2::fint]
-    time_arr = np.linspace(startsec,endsec,data3.shape[0])
-    data3 = data3.T
+    # data3=np.sum(data.reshape(nsamples/tint,tint,nfreq),axis=1)
+    # data3=np.sum(data3.reshape(nsamples/tint,nfreq/fint,fint),axis=2)
+    # timeres *= tint 
+    # freqaxis = freqaxis[fint//2::fint]
+    # time_arr = np.linspace(startsec,endsec,data3.shape[0])
+    #data3 = data3.T
 
-    return data3, timeres, time_arr, freqaxis
+    return data.T, timeres, time_arr, freqaxis
 
 def rebin_tf(data, tint=1, fint=1):
     """ Rebin in time and frequency accounting 
@@ -52,6 +74,9 @@ def rebin_tf(data, tint=1, fint=1):
 
 def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
             taxis=1, vmax=3, vmin=-2):
+    """ Plot the 2D time/freq data. Freq is in Hz. vmax and 
+    vmin are in sigmas. 
+    """
     data_ = data.copy()
     if taxis==0:
         print("Transposing for plotter")
@@ -79,7 +104,8 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
     plt.show()
 
 def plot_dedisp(data_dd, time_arr=None, dm=0):
-    """ Visualize dedispersed data
+    """ Plot dedispersed data. data_dd should be a 
+    (nfreq, ntime) array.
     """
     nfreq,ntime = data_dd.shape
     if time_arr is None:
@@ -99,6 +125,26 @@ def plot_dedisp(data_dd, time_arr=None, dm=0):
 def dedisperse(data, dm, timeres=4.9152e-4, 
                freq=(109863281.25, 187976074.21875), 
                freq_ref=None):
+    """ Dedisperse data to some dm
+
+    Parameters:
+    ----------
+    data : ndarray
+        (nfreq, ntime) array 
+    dm : float 
+        dispersion measure in pc cm**-3
+    timeres : float 
+        time resolution of data in seconds 
+    freq : ndarray or tuple 
+        should be the frequency array in Hz, 
+        either length 2 or length nfreq 
+    freq_ref : 
+        if None, assumes center of band
+
+    Returns: 
+    -------
+    Dedispersed data 
+    """
     data = data.copy()
     
     nfreq, ntime = data.shape[0], data.shape[1]
@@ -149,7 +195,8 @@ def dumb_clean(data, taxis=1, plot_clean=False):
     return data, ind_use, mask
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="RFI clean, dedisperse, plot beamformed LOFAR data",
+    parser = argparse.ArgumentParser(
+                     description="RFI clean, dedisperse, plot LOFAR data",
                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-f', '--fn', 
                         help='filename (assumes h5 for now)', 
@@ -174,18 +221,23 @@ if __name__ == '__main__':
 
     data, timeres, time_arr, freqaxis = read_h5(inputs.fn, startsec, endsec, tint=1, fint=1)
 
+    # RFI clean data by zapping bad channels
     if inputs.rfi:
         data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
+    # Dedisperse data if given DM > 0
     if inputs.dm>0:
         data = dedisperse(data, dm, freq=freqaxis, timeres=timeres)
+    # Downsample / channelize data
     if inputs.fint>1 or inputs.tint>1:
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
         time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
         freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
+    # Make plots
     if inputs.plot_all:
         print(time_arr.shape, freqaxis.shape, data.shape)
         plot_im(data, time_arr, vmax=3, vmin=-2)
         plot_dedisp(data, time_arr, dm=inputs.dm)
+    # Save data to numpy arrays
     if inputs.save_data:
         np.save(fn.strip('.h5')+'_DM%0.2f.npy' % inputs.dm, data)
         np.save(fn.strip('.h5')+'timeseries_DM%0.2f.npy' % inputs.dm, data.mean(0))
