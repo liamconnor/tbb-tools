@@ -15,15 +15,16 @@ def read_h5(fn, startsec, endsec, tint=1, fint=1):
     startsample=(int(startsec/timeres)/tint)*tint
     endsample=(int(endsec/timeres)/tint)*tint
     data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
-    nfreq=data.shape[1]
+    ntime,nfreq=data.shape
     nsamples=endsample-startsample
     data3=np.sum(data.reshape(nsamples/tint,tint,nfreq),axis=1)
     data3=np.sum(data3.reshape(nsamples/tint,nfreq/fint,fint),axis=2)
     timeres *= tint 
     freqaxis = freqaxis[fint//2::fint]
+    time_arr = np.linspace(startsec,endsec,data3.shape[0])
     data3 = data3.T
 
-    return data3, timeres, freqaxis
+    return data3, timeres, time_arr, freqaxis
 
 def rebin_tf(data, tint=1, fint=1):
     """ Rebin in time and frequency accounting 
@@ -49,7 +50,8 @@ def rebin_tf(data, tint=1, fint=1):
 
     return data_
 
-def plot_im(data, timeres=None, taxis=1, vmax=3, vmin=-2):
+def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
+            taxis=1, vmax=3, vmin=-2):
     data_ = data.copy()
     if taxis==0:
         print("Transposing for plotter")
@@ -60,11 +62,11 @@ def plot_im(data, timeres=None, taxis=1, vmax=3, vmin=-2):
     data_ -= np.mean(data_,axis=-1,keepdims=True)
     data_ /= np.std(data_)
 
-    if timeres is None:
-        extent = [startsample, endsample, freqaxis[0],freqaxis[-1]]
-        xlab_ = 'Time sample'
+    if time_arr is None:
+        extent = [0, ntime, freq[0],freq[-1]]
+        xlab_ = 'Time (sample)'
     else:
-        extent = [startsample*timeres,endsample*timeres,freqaxis[0],freqaxis[-1]]
+        extent = [time_arr[0],time_arr[1],freqaxis[0],freqaxis[-1]]
         xlab_ = 'Time (sec)'
 
     data_[data_==0] = np.inf
@@ -76,15 +78,19 @@ def plot_im(data, timeres=None, taxis=1, vmax=3, vmin=-2):
     plt.ylabel('Freq', fontsize=16)
     plt.show()
 
-def plot_dedisp(data_dd, timeres=4.9152e-4):
+def plot_dedisp(data_dd, time_arr=None):
     """ Visualize dedispersed data
     """
     nfreq,ntime = data_dd.shape
-    time_arr = np.linspace(0, timeres*ntime)
+    if time_arr is None:
+        time_arr = np.linspace(0, ntime, ntime)
+        xlab_ = 'Time (sample)'
+    else:
+        xlab_ = 'Time (sec)'
     dd_ts = data_dd.mean(0)
     fig = plt.figure()
     plt.plot(time_arr, dd_ts.mean(0))
-    plt.xlabel('Time (s)')
+    plt.xlabel(xlab_, fontsize=16)
     plt.show()
 
 def dedisperse(data, dm, timeres=4.9152e-4, 
@@ -162,10 +168,10 @@ if __name__ == '__main__':
     inputs = parser.parse_args()
     startsec, endsec = inputs.times[0], inputs.times[1]
 
-    data, timeres, freqaxis = read_h5(inputs.fn, startsec, endsec, tint=1, fint=1)
+    data, timeres, time_arr, freqaxis = read_h5(inputs.fn, startsec, endsec, tint=1, fint=1)
 
     if inputs.rfi:
-        data, ind_use, mask = dumb_clean(data, plot_clean=True)
+        data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
     if inputs.dm>0:
         data = dedisperse(data, dm, freq=freqaxis, timeres=timeres)
     if inputs.fint>1 or inputs.tint>1:
