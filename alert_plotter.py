@@ -4,11 +4,13 @@ import numpy as np
 import matplotlib.pylab as plt 
 import argparse 
 import h5py
+from datetime import datetime, timedelta
+import time 
 
 startsec, endsec=0, 5
-dm = 26.8 
+dm = 26.8
 
-def read_h5(fn, startsec, endsec):
+def read_h5(fn, time_range=(0,5)):
     """ Read in hdf5 beamformed data at native resolution.
     Transpose data to (nfreq, ntime)
 
@@ -33,6 +35,16 @@ def read_h5(fn, startsec, endsec):
         frequency array in Hz
     """
     file = h5py.File(fn, 'r')
+
+    if len(time_range)==1:
+        print("Assuming unix time %s" % time_range[0])
+        start_time_file=datetime.strptime(f.attrs[u'OBSERVATION_START_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
+        start_time_file_unix=time.mktime(start_time.timetuple())
+        startsec=start_time_file_unix-time_range[0]
+        endsec=startsec+5
+    elif len(time_range)==2:
+        startsec, endsec = time_range
+
     if endsec<=startsec:
         print("Start time is larger than end time")
         exit()
@@ -51,7 +63,7 @@ def read_h5(fn, startsec, endsec):
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
 
-    return data.T, timeres, time_arr, freqaxis
+    return data.T, timeres, time_arr, freqaxis, start_time
 
 def rebin_tf(data, tint=1, fint=1):
     """ Rebin in time and frequency accounting 
@@ -236,13 +248,16 @@ if __name__ == '__main__':
         endsec = startsec + 5.0
 
     if inputs.fn[-2:]=='h5':
-        data, timeres, time_arr, freqaxis = read_h5(inputs.fn, startsec, endsec)
+        data, timeres, time_arr, freqaxis, start_time = read_h5(inputs.fn, 
+                                                                startsec, 
+                                                                endsec)
         ftype='h5'
     elif inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
         ftype='npy'
         if inputs.rfi:
-            data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
+            data, ind_use, mask = dumb_clean(data, 
+                                        plot_clean=inputs.plot_all)
         if inputs.fint>1 or inputs.tint>1:
             data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
         if inputs.plot_all:
