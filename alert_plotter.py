@@ -222,16 +222,17 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--save_data', help='save data to .npy',
                         action='store_true')
     parser.add_argument('-T', '--times', help='start and end time in seconds', nargs='+',
-                        type=float, default=(0,5))
+                        type=float, default=(0,5.0))
     parser.add_argument('-p', '--plot_all', 
                         help='Make plots along the way', action='store_true')
 
     inputs = parser.parse_args()
 
+    print(inputs.times)
     if len(inputs.times)==2:
         startsec, endsec = inputs.times[0], inputs.times[1]
     elif len(inputs.times)==1:
-        startsec = inputs.times
+        startsec = inputs.times[0]
         endsec = startsec + 5.0
 
     if inputs.fn[-2:]=='h5':
