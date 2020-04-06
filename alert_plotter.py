@@ -163,8 +163,11 @@ if __name__ == '__main__':
     startsec, endsec = inputs.times[0], inputs.times[1]
 
     fdir = '/'.join(inputs.fn.split('/')[:-1])
+    print(fdir)
+    print(inputs.fn)
     os.system('cd %s' % fdir)
     fn = inputs.fn.split('/')[-1]
+    print(fn)
     data, timeres, freqaxis = read_h5(fn, startsec, endsec, tint=1, fint=1)
 
     if inputs.rfi:
