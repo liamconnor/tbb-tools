@@ -85,8 +85,8 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
 
     nfreq, ntime = data.shape
     print("Plotter: Assuming nfreq: %d and ntime: %d" % (nfreq, ntime))
-    data_ -= np.mean(data_,axis=-1,keepdims=True)
-    data_ /= np.std(data_, axis=-1, keepdims=True)
+    data_ -= np.mean(data_,axis=-1)[..., None]
+    data_ /= np.std(data_, axis=-1)[..., None]
 
     if time_arr is None:
         extent = [0, ntime, freq[0], freq[-1]]
