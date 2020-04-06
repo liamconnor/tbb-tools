@@ -39,13 +39,12 @@ def read_h5(fn, time_range=(0,5)):
     print("Unix times in file: %d-%d" % (start_time_file_unix, end_time_file_unix))
 
     if len(time_range)==1:
-        print("Assuming unix time %s" % time_range[0])
+        assert time_range[0]>=start_time_file_unix and time_range[0]<=end_time_file_unix,
+                    "That unix time is not in the file"
+        print("Looking for data at unix time %s" % time_range[0])
         startsec=time_range[0]-start_time_file_unix
         endsec=startsec+5
         print(start_time_file_unix, time_range[0], startsec, endsec)
-        if startsec>=np.abs(end_time_file_unix-start_time_file_unix):
-            print("That unix time is not in the file")
-            exit()
     elif len(time_range)==2:
         startsec, endsec = time_range
 
@@ -244,7 +243,6 @@ if __name__ == '__main__':
 
     inputs = parser.parse_args()
 
-    print(inputs.times)
     if len(inputs.times)==2:
         startsec, endsec = inputs.times[0], inputs.times[1]
     elif len(inputs.times)==1:
