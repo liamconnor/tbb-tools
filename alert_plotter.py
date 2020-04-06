@@ -249,8 +249,7 @@ if __name__ == '__main__':
 
     if inputs.fn[-2:]=='h5':
         data, timeres, time_arr, freqaxis, start_time = read_h5(inputs.fn, 
-                                                                startsec, 
-                                                                endsec)
+                                                                inputs.times)
         ftype='h5'
     elif inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
