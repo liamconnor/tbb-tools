@@ -33,6 +33,12 @@ def read_h5(fn, startsec, endsec):
         frequency array in Hz
     """
     file = h5py.File(fn, 'r')
+    if endsec<=startsec:
+        print("Start time is larger than end time")
+        exit()
+    elif endsec-startsec>25.0:
+        print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
+
     timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
     freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
     startsample=int(startsec/timeres)
@@ -41,6 +47,7 @@ def read_h5(fn, startsec, endsec):
     ntime,nfreq=data.shape
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
+    print(data)
 
     return data.T, timeres, time_arr, freqaxis
 
@@ -226,7 +233,6 @@ if __name__ == '__main__':
     elif inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
         ftype='npy'
-
 
     # RFI clean data by zapping bad channels
     if inputs.rfi:
