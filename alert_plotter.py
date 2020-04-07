@@ -45,7 +45,6 @@ def read_h5(fn, time_range=(0,5)):
         print("Looking for data at unix time %s" % time_start)
         startsec=time_start-start_time_file_unix
         endsec=startsec+5
-        print(start_time_file_unix, time_start, startsec, endsec)
     elif len(time_range)==2:
         startsec, endsec = time_range
 
@@ -68,6 +67,18 @@ def read_h5(fn, time_range=(0,5)):
     time_arr = np.linspace(startsec,endsec,ntime)
 
     return data.T, timeres, time_arr, freqaxis, start_time_file
+
+def read_cs_h5(fn): 
+    """ Combine multiple files
+    """
+    pass    
+
+
+def volt2intensity(data):
+    assert data.shape[-1]%4==0, "Expecting 4*ntime (xr,xi,yr,yi)"
+    I = data[:, ::4]**2 + data[:, 1::4]**2 \
+        + data[:, 2::4]**2 + data[:, 3::4]**2
+    return I
 
 def rebin_tf(data, tint=1, fint=1):
     """ Rebin in time and frequency accounting 
