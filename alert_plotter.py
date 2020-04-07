@@ -302,11 +302,11 @@ if __name__ == '__main__':
         plot_im(data, time_arr, vmax=3, vmin=-2, 
                 figname='/home/connor/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
         plot_dedisp(data, time_arr, dm=inputs.dm,
-                    figname='~/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
+                    figname='/home/connor/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
     # Save data to numpy arrays
     if inputs.save_data:
         np.save('/home/connor/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
         np.save('/home/connor/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
-
+    print("Saved all plots to /home/connor/*pdf")
 
