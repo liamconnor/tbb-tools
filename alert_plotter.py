@@ -73,7 +73,6 @@ def read_cs_h5(fn):
     """
     pass    
 
-
 def volt2intensity(data):
     assert data.shape[-1]%4==0, "Expecting 4*ntime (xr,xi,yr,yi)"
     I = data[:, ::4]**2 + data[:, 1::4]**2 \
@@ -110,7 +109,7 @@ def read_npy(fn):
     return data
 
 def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
-            taxis=1, vmax=3, vmin=-2):
+            taxis=1, vmax=3, vmin=-2, figname=None):
     """ Plot the 2D time/freq data. Freq is in Hz. vmax and 
     vmin are in sigmas. 
     """
@@ -139,9 +138,11 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
     plt.xlabel(xlab_, fontsize=16)
     plt.ylabel('Freq', fontsize=16)
     plt.colorbar()
+    if figname is not None:
+        plt.savefig(figname)
     plt.show()
 
-def plot_dedisp(data_dd, time_arr=None, dm=0):
+def plot_dedisp(data_dd, time_arr=None, dm=0, figname=None):
     """ Plot dedispersed data. data_dd should be a 
     (nfreq, ntime) array.
     """
@@ -157,6 +158,8 @@ def plot_dedisp(data_dd, time_arr=None, dm=0):
     plt.plot(time_arr, dd_ts)
     plt.xlabel(xlab_, fontsize=16)
     plt.legend(['Freq-avg time series DM=%0.2f'%dm])
+    if figname is not None:
+        plt.savefig(figname)
     plt.show()
 
 def dedisperse(data, dm, timeres=4.9152e-4, 
@@ -207,7 +210,7 @@ def dedisperse(data, dm, timeres=4.9152e-4,
 
     return data
 
-def dumb_clean(data, taxis=1, plot_clean=False):
+def dumb_clean(data, taxis=1, plot_clean=False, figname=None):
     """ Do a simple RFI cleaning based on 
     variance in time and frequency direction.
     """
@@ -225,6 +228,8 @@ def dumb_clean(data, taxis=1, plot_clean=False):
         plt.legend(['Unmasked', 'Masked %0.1f percent' % (100*len(mask)/float(nfreq))])
         plt.xlabel('Freq channel', fontsize=16)
         plt.semilogy()
+        if figname is not None:
+            plt.savefig(figname)
         plt.show()
 
     data[mask] = 0
@@ -281,10 +286,12 @@ if __name__ == '__main__':
 
     # RFI clean data by zapping bad channels
     if inputs.rfi:
-        data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all)
+        data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
+                                         figname=fn.strip(ftype)+'_rfi.pdf')
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
-        data = dedisperse(data, inputs.dm, freq=freqaxis, timeres=timeres)
+        data = dedisperse(data, inputs.dm, freq=freqaxis, 
+                          timeres=timeres)
     # Downsample / channelize data
     if inputs.fint>1 or inputs.tint>1:
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
@@ -292,8 +299,10 @@ if __name__ == '__main__':
         freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
     # Make plots
     if inputs.plot_all:
-        plot_im(data, time_arr, vmax=3, vmin=-2)
-        plot_dedisp(data, time_arr, dm=inputs.dm)
+        plot_im(data, time_arr, vmax=3, vmin=-2, 
+                figname=fn.strip(ftype)+'_waterfall.pdf')
+        plot_dedisp(data, time_arr, dm=inputs.dm,
+                    figname=fn.strip(ftype)+'_dedisp_ts.pdf')
     # Save data to numpy arrays
     if inputs.save_data:
         np.save(fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
