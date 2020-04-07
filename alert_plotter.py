@@ -270,24 +270,24 @@ if __name__ == '__main__':
     if inputs.fn[-2:]=='h5':
         data, timeres, time_arr, freqaxis, start_time = read_h5(inputs.fn, 
                                                                 inputs.times)
-        ftype='h5'
+        ftype='.h5'
     elif inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
-        ftype='npy'
+        ftype='.npy'
         if inputs.rfi:
             data, ind_use, mask = dumb_clean(data, 
                                         plot_clean=inputs.plot_all)
         if inputs.fint>1 or inputs.tint>1:
             data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
         if inputs.plot_all:
-            plot_im(data, vmax=3, vmin=-2)
+            plot_im(data, vmax=1, vmin=-1)
             plot_dedisp(data, dm=inputs.dm)
         exit()
 
     # RFI clean data by zapping bad channels
     if inputs.rfi:
         data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
-                                         figname=inputs.fn.strip(ftype)+'_rfi.pdf')
+                                         figname='~/'+inputs.fn.strip(ftype)+'_rfi.pdf')
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
         data = dedisperse(data, inputs.dm, freq=freqaxis, 
@@ -300,13 +300,13 @@ if __name__ == '__main__':
     # Make plots
     if inputs.plot_all:
         plot_im(data, time_arr, vmax=3, vmin=-2, 
-                figname=inputs.fn.strip(ftype)+'_waterfall.pdf')
+                figname='~/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
         plot_dedisp(data, time_arr, dm=inputs.dm,
-                    figname=inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
+                    figname='~/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
     # Save data to numpy arrays
     if inputs.save_data:
-        np.save(inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
-        np.save(inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
+        np.save('~/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
+        np.save('~/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
 
 
