@@ -54,11 +54,11 @@ def read_h5(fn, time_range=(0,5)):
     elif endsec-startsec>30.0:
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
-    timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
-    freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+    timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+    freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
-    data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
+    data=file["/SUB_ARRAY_POINTING_000/BEAM_001/STOKES_0"][startsample:endsample,:]
     if len(data)==0:
         print("No data in specified range")
         exit()
@@ -66,7 +66,7 @@ def read_h5(fn, time_range=(0,5)):
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
 
-    return data.T, timeres, time_arr, freqaxis, start_time_file
+    return data.T, timeres, time_arr, freqaxis, start_time_file_unix
 
 def read_cs_h5(fn): 
     """ Combine multiple files
@@ -268,8 +268,9 @@ if __name__ == '__main__':
         endsec = startsec + 5.0
 
     if inputs.fn[-2:]=='h5':
-        data, timeres, time_arr, freqaxis, start_time = read_h5(inputs.fn, 
-                                                                inputs.times)
+        res = read_h5(inputs.fn, 
+                      inputs.times)
+        data, timeres, time_arr, freqaxis, start_time_file_unix = res
         ftype='.h5'
     elif inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
@@ -297,8 +298,10 @@ if __name__ == '__main__':
         data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
         time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
         freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
+        timeres *= inputs.tint
     # Make plots
     if inputs.plot_all:
+        time_arr += start_time_file_unix
         plot_im(data, time_arr, vmax=3, vmin=-2, 
                 figname='/home/connor/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
         plot_dedisp(data, time_arr, dm=inputs.dm,
@@ -308,5 +311,5 @@ if __name__ == '__main__':
         np.save('/home/connor/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
         np.save('/home/connor/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
-    print("Saved all plots to /home/connor/*pdf")
+    print("\nSaved all plots to /home/connor/*pdf\n")
 
