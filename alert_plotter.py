@@ -58,7 +58,7 @@ def read_h5(fn, time_range=(0,5)):
     freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
-    data=file["/SUB_ARRAY_POINTING_000/BEAM_001/STOKES_0"][startsample:endsample,:]
+    data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
     if len(data)==0:
         print("No data in specified range")
         exit()
