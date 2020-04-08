@@ -44,7 +44,7 @@ def read_h5(fn, time_range=(0,5)):
         assert range_err, "That unix time is not in the file"
         print("Looking for data at unix time %s" % time_start)
         startsec=time_start-start_time_file_unix
-        endsec=startsec+5
+        endsec=startsec+8
     elif len(time_range)==2:
         startsec, endsec = time_range
 
@@ -54,8 +54,8 @@ def read_h5(fn, time_range=(0,5)):
     elif endsec-startsec>30.0:
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
-    timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
-    freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+    timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+    freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
     data=file["/SUB_ARRAY_POINTING_000/BEAM_001/STOKES_0"][startsample:endsample,:]
