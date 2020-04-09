@@ -54,11 +54,18 @@ def read_h5(fn, time_range=(0,5)):
     elif endsec-startsec>30.0:
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
-    timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
-    freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+    try:
+        timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+        freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+        beamno=0
+    except:
+        timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+        freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+        beamno=1
+
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
-    data=file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
+    data=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample:endsample,:]
     if len(data)==0:
         print("No data in specified range")
         exit()
