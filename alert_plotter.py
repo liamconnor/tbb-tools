@@ -66,16 +66,34 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
 
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
-    data=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample:endsample,:]
+    ntime=endsample-startsample
+    nfreq=len(freqaxis)
+    chunksize=10000.
+    if ntime>chunksize:
+        data = np.empty([nfreq,ntime])
+        print("Reading the file in chunks of %d" % chunksize)
+        nchunk=int(np.ceil(ntime/chunksize))
+        for jj in range(nchunk):
+            startjj,endjj = int(jj*chunksize),int((jj+1)*chunksize)
+            print(startjj, endjj)
+            data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,:]
+
+            if jj<nchunk-1:
+                data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,:]
+                data[:, startjj:endjj] = data_.T
+            else:
+                data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:endsample,:]  
+                data[:, startjj:] = data_.T
+            print(startjj, endjj)
+    else:
+        data=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample:endsample,:]
+        data=data.T
+
     if len(data)==0:
         print("No data in specified range")
         exit()
 
-    ntime,nfreq=data.shape
-    nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
-
-    data = data.T
 
     if fint>1 or tint>1:
         data = rebin_tf(data, tint=tint, fint=fint)
