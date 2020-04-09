@@ -280,6 +280,7 @@ if __name__ == '__main__':
     if inputs.plot_all:
         try:
             fig = plt.figure()
+            plt.close()
         except:
             print("cannot display plots. will save them locally.")
             import matplotlib 
