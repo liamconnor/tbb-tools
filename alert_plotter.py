@@ -283,7 +283,7 @@ if __name__ == '__main__':
         except:
             print("cannot display plots. will save them locally.")
             import matplotlib 
-            matplotlib.use('Agg', warn=False)
+            matplotlib.use('pdf', warn=False)
             import matplotlib.pyplot as plt
 
     if len(inputs.times)==2:
