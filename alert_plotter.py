@@ -7,7 +7,7 @@ import h5py
 from datetime import datetime, timedelta
 import time 
 
-def read_h5(fn, time_range=(0,5)):
+def read_h5(fn, time_range=(0,5), tint=1, fint=1):
     """ Read in hdf5 beamformed data at native resolution.
     Transpose data to (nfreq, ntime)
 
@@ -69,11 +69,19 @@ def read_h5(fn, time_range=(0,5)):
     if len(data)==0:
         print("No data in specified range")
         exit()
+
     ntime,nfreq=data.shape
     nsamples=endsample-startsample
     time_arr = np.linspace(startsec,endsec,ntime)
 
-    return data.T, timeres, time_arr, freqaxis, start_time_file_unix
+    data = data.T
+
+    if fint>1 or tint>1:
+        data = rebin_tf(data, tint=tint, fint=fint)
+        time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
+        freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
+
+    return data, timeres, time_arr, freqaxis, start_time_file_unix
 
 def read_cs_h5(fn): 
     """ Combine multiple files
@@ -275,8 +283,8 @@ if __name__ == '__main__':
         endsec = startsec + 5.0
 
     if inputs.fn[-2:]=='h5':
-        res = read_h5(inputs.fn, 
-                      inputs.times)
+        res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
+                      fint=inputs.fint)
         data, timeres, time_arr, freqaxis, start_time_file_unix = res
         ftype='.h5'
     elif inputs.fn[-3:]=='npy':
