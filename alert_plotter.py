@@ -36,7 +36,8 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
     end_time_file=datetime.strptime(file.attrs[u'OBSERVATION_END_UTC'][0:19],'%Y-%m-%dT%H:%M:%S')
     start_time_file_unix=time.mktime(start_time_file.timetuple())
     end_time_file_unix=time.mktime(end_time_file.timetuple())
-    print("Unix times in file: %d-%d" % (start_time_file_unix, end_time_file_unix))
+    print("Unix times in file: %d-%d" % (start_time_file_unix, 
+                                         end_time_file_unix))
 
     if len(time_range)==1:
         time_start = time_range[0]-0.25
@@ -275,6 +276,15 @@ if __name__ == '__main__':
                         help='Make plots along the way', action='store_true')
 
     inputs = parser.parse_args()
+
+    if inputs.plot_all:
+        try:
+            fig = plt.figure()
+        except:
+            print("cannot display plots. will save them locally.")
+            import matplotlib 
+            matplotlib.use('Agg', warn=False)
+            import matplotlib.pyplot as plt
 
     if len(inputs.times)==2:
         startsec, endsec = inputs.times[0], inputs.times[1]
