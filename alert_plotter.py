@@ -282,10 +282,8 @@ if __name__ == '__main__':
             fig = plt.figure()
             plt.close()
         except:
-            print("cannot display plots. will save them locally.")
-            import matplotlib 
-            matplotlib.use('pdf', warn=False)
-            import matplotlib.pyplot as plt
+            print("Cannot plot, turning that off.")
+            inputs.plot_all=False
 
     if len(inputs.times)==2:
         startsec, endsec = inputs.times[0], inputs.times[1]
