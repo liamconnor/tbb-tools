@@ -75,7 +75,6 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
         nchunk=int(np.ceil(ntime/chunksize))
         for jj in range(nchunk):
             startjj,endjj = int(jj*chunksize),int((jj+1)*chunksize)
-            print(startjj, endjj)
             data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,:]
 
             if jj<nchunk-1:
@@ -84,7 +83,6 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
             else:
                 data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:endsample,:]  
                 data[:, startjj:] = data_.T
-            print(startjj, endjj)
     else:
         data=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample:endsample,:]
         data=data.T
