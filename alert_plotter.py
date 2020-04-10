@@ -85,6 +85,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
         exit()
 
     timeres, freqaxis, beamno = get_timefreq(file)
+    freqaxis = freqaxis[freqmin:freqmax]
 
     print("\nAssuming time resolution: %0.6f\n" % timeres)
 
