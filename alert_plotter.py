@@ -362,10 +362,12 @@ if __name__ == '__main__':
 
     # Make plots
     if inputs.plot_all:
-        plot_im(data, time_arr, vmax=3, vmin=-2, 
-                figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
+        fignameim=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf'
+        fignamedd=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf'
+        plot_im(data, freq=(freqaxis[0], freqaxis[1]), time_arr, vmax=3, vmin=-2, 
+                figname=fignameim)
         plot_dedisp(data, time_arr, dm=inputs.dm,
-                    figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
+                    figname=fignameddd)
     # Save data to numpy arrays
     if inputs.save_data:
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
