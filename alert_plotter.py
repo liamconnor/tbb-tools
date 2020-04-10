@@ -338,7 +338,7 @@ if __name__ == '__main__':
     # RFI clean data by zapping bad channels
     if inputs.rfi:
         data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
-                                         figname=homedir+inputs.fn.strip(ftype)+'_rfi.pdf')
+                                         figname=homedir+'/'+inputs.fn.strip(ftype)+'_rfi.pdf')
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
         data = dedisperse(data, inputs.dm, freq=freqaxis, 
@@ -353,13 +353,13 @@ if __name__ == '__main__':
     if inputs.plot_all:
         time_arr += start_time_file_unix
         plot_im(data, time_arr, vmax=3, vmin=-2, 
-                figname=homedir+inputs.fn.strip(ftype)+'_waterfall.pdf')
+                figname=homedir+'/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
         plot_dedisp(data, time_arr, dm=inputs.dm,
-                    figname=homedir+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
+                    figname=homedir+'/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
     # Save data to numpy arrays
     if inputs.save_data:
-        np.save(homedir+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
-        np.save(homedir+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
+        np.save(homedir+'/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
+        np.save(homedir+'/'inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
     print("\nSaved all plots to ./*pdf\n")
 
