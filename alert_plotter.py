@@ -12,12 +12,10 @@ def get_timefreq(file):
     try:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
         freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
-        freqaxis=freqaxis[freqmin:freqmax]
         beamno=0
     except:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
         freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
-        freqaxis=freqaxis[freqmin:freqmax]
         beamno=1
 
     return timeres, freqaxis, beamno
