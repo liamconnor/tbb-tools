@@ -184,6 +184,7 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
 
     data_[data_==0] = np.inf
     fig = plt.figure()
+    print(extent)
     plt.imshow(data_,origin='lower',aspect='auto',
                vmin=vmin,vmax=vmax,
                extent=extent, cmap='hot')
@@ -363,7 +364,6 @@ if __name__ == '__main__':
         time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
         freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
         timeres *= inputs.tint
-
 
     # Make plots
     if inputs.plot_all:
