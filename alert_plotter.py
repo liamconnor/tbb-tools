@@ -368,6 +368,7 @@ if __name__ == '__main__':
                                              figname=fignamerfi)
         # Dedisperse data if given DM > 0
         if inputs.dm>0:
+            print(data.shape)
             data = dedisperse(data, inputs.dm, freq=freqaxis,  
                               timeres=timeres)
 
