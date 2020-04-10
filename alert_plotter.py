@@ -63,8 +63,13 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
     elif endsec-startsec>30.0:
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
-    if freqaxis=='all':
+    if freqindex=='all':
         freqmin,freqmax=0,-1
+    elif len(freqindex)==2:
+        pass
+    else:
+        print("Expecting either str or len(2) tuple")
+        exit()
 
     try:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
