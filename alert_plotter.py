@@ -311,6 +311,8 @@ if __name__ == '__main__':
                         type=float, default=(0,5.0))
     parser.add_argument('-p', '--plot_all', 
                         help='Make plots along the way', action='store_true')
+    parser.add_argument('--nfchunks', 
+                        help='number of freq chunks', default=1)
 
     inputs = parser.parse_args()
     
@@ -330,7 +332,7 @@ if __name__ == '__main__':
 
     if inputs.fn[-2:]=='h5':
         res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
-                      fint=inputs.fint)
+                      fint=inputs.fint, freqindex=(0,10000))
         data, timeres, time_arr, freqaxis, start_time_file_unix = res
         ftype='.h5'
     elif inputs.fn[-3:]=='npy':
@@ -360,6 +362,8 @@ if __name__ == '__main__':
         time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
         freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
         timeres *= inputs.tint
+
+
     # Make plots
     if inputs.plot_all:
         time_arr += start_time_file_unix
