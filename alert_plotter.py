@@ -346,21 +346,23 @@ if __name__ == '__main__':
             plot_dedisp(data, dm=inputs.dm)
         exit()
 
-    # RFI clean data by zapping bad channels
-    if inputs.rfi:
-        fignamerfi=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_rfi.pdf'
-        data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
-                                         figname=fignamerfi)
-    # Dedisperse data if given DM > 0
-    if inputs.dm>0:
-        data = dedisperse(data, inputs.dm, freq=freqaxis,  
-                          timeres=timeres)
-    # Downsample / channelize data
-    if inputs.fint>1 or inputs.tint>1:
-        data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
-        time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
-        freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
-        timeres *= inputs.tint
+    for chunk in range(inputs.nfchunks):
+        # RFI clean data by zapping bad channels
+        if inputs.rfi:
+            fignamerfi=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_rfi.pdf'
+            data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
+                                             figname=fignamerfi)
+        # Dedisperse data if given DM > 0
+        if inputs.dm>0:
+            data = dedisperse(data, inputs.dm, freq=freqaxis,  
+                              timeres=timeres)
+            
+        # Downsample / channelize data
+        if inputs.fint>1 or inputs.tint>1:
+            data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
+            time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
+            freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
+            timeres *= inputs.tint
 
     # Make plots
     if inputs.plot_all:
