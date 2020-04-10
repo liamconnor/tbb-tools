@@ -326,7 +326,6 @@ if __name__ == '__main__':
             print("Cannot plot, turning that off.")
             inputs.plot_all=False
 
-
     if inputs.fn[-2:]=='h5':
         res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
                       fint=inputs.fint, freqindex=(0,10000))
@@ -347,8 +346,9 @@ if __name__ == '__main__':
 
     # RFI clean data by zapping bad channels
     if inputs.rfi:
+        fignamerfi=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_rfi.pdf'
         data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
-                                         figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_rfi.pdf')
+                                         figname=fignamerfi)
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
         data = dedisperse(data, inputs.dm, freq=freqaxis, 
@@ -362,7 +362,6 @@ if __name__ == '__main__':
 
     # Make plots
     if inputs.plot_all:
-        time_arr += start_time_file_unix
         plot_im(data, time_arr, vmax=3, vmin=-2, 
                 figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
         plot_dedisp(data, time_arr, dm=inputs.dm,
