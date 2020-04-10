@@ -342,6 +342,9 @@ if __name__ == '__main__':
             plot_dedisp(data, dm=inputs.dm)
         exit()
 
+    data_full=[]
+    time_arr_full=[]
+    freqaxis_full=[]
     for chunk in range(inputs.nfchunks):
         if inputs.fn[-2:]=='h5':
             res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
@@ -364,6 +367,15 @@ if __name__ == '__main__':
             time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
             freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
             timeres *= inputs.tint
+
+        data_full.append(data)
+        time_arr_full.append(time_arr)
+        freqaxis_full.append(freqaxis)
+
+    data = np.concatentate(data_full, axis=0)
+    time_arr = np.array(time_arr_full)
+    freqaxis = np.array(freqaxis_full)
+    print(data.shape, time_arr.shape, freqaxis.shape)
 
     # Make plots
     if inputs.plot_all:
