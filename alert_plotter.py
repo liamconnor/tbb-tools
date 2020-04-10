@@ -254,7 +254,7 @@ def dedisperse(data, dm, timeres=4.9152e-4,
 
     # Convert from Hz to MHz
     freq_arr *= 1e-6
-    print(freq_arr, timeres)
+
     if freq_ref is None:
         freq_ref = np.median(freq_arr)
 
@@ -357,7 +357,7 @@ if __name__ == '__main__':
     nchantot=len(freqaxis_tot)
     file.close()
     fchunksize=int(np.ceil(nchantot/inputs.nfchunks))
-    freq_ref=np.median(freqaxis_tot)
+    freq_ref_MHz=1e-6*np.median(freqaxis_tot)
     for chunk in range(inputs.nfchunks):
         if inputs.fn[-2:]=='h5':
             res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
