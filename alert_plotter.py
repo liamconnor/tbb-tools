@@ -72,6 +72,8 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
         freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
         beamno=1
 
+    print("\nAssuming time resolution: %0.6f\n" % timeres)
+
     startsample=int(startsec/timeres)
     endsample=int(endsec/timeres)
     ntime=endsample-startsample
