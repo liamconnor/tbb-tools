@@ -364,10 +364,9 @@ if __name__ == '__main__':
     if inputs.plot_all:
         fignameim=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf'
         fignamedd=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf'
-        plot_im(data, freq=(freqaxis[0], freqaxis[1]), time_arr, vmax=3, vmin=-2, 
-                figname=fignameim)
-        plot_dedisp(data, time_arr, dm=inputs.dm,
-                    figname=fignameddd)
+        plot_im(data, freq=(freqaxis[0], freqaxis[1]), time_arr, vmax=3, vmin=-2, figname=fignameim)
+        plot_dedisp(data, time_arr, dm=inputs.dm, figname=fignamedd)
+        
     # Save data to numpy arrays
     if inputs.save_data:
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
@@ -375,4 +374,12 @@ if __name__ == '__main__':
 
     print("\nSaved all plots to %s\n" % (inputs.outdir+'/plots/'))
     print("\nSaved all data to %s\n" % (inputs.outdir+'/dedispbf/'))
+
+
+
+
+
+
+
+
 
