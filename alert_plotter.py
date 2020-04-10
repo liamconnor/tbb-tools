@@ -293,6 +293,8 @@ if __name__ == '__main__':
                         default=1, type=int)
     parser.add_argument('-dm', '--dm', help='dispersion measure', 
                         default=0, type=float)
+    parser.add_argument('-o', '--outdir', help='output directory for data and plots',
+                        default='/data/projects/COM_ALERT/', type=str)
     parser.add_argument('-s', '--save_data', help='save data to .npy',
                         action='store_true')
     parser.add_argument('-T', '--times', 
@@ -303,8 +305,6 @@ if __name__ == '__main__':
 
     inputs = parser.parse_args()
     
-    homedir=os.getenv("HOME")
-
     if inputs.plot_all:
         try:
             fig = plt.figure()
@@ -340,7 +340,7 @@ if __name__ == '__main__':
     # RFI clean data by zapping bad channels
     if inputs.rfi:
         data, ind_use, mask = dumb_clean(data, plot_clean=inputs.plot_all, 
-                                         figname=homedir+'/'+inputs.fn.strip(ftype)+'_rfi.pdf')
+                                         figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_rfi.pdf')
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
         data = dedisperse(data, inputs.dm, freq=freqaxis, 
@@ -355,13 +355,14 @@ if __name__ == '__main__':
     if inputs.plot_all:
         time_arr += start_time_file_unix
         plot_im(data, time_arr, vmax=3, vmin=-2, 
-                figname=homedir+'/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
+                figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf')
         plot_dedisp(data, time_arr, dm=inputs.dm,
-                    figname=homedir+'/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
+                    figname=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf')
     # Save data to numpy arrays
     if inputs.save_data:
-        np.save(homedir+'/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
-        np.save(homedir+'/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
+        np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
+        np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
-    print("\nSaved all plots to ./*pdf\n")
+    print("\nSaved all plots to %s\n" % inputs.outdir+'/plots/')
+    print("\nSaved all data to %s\n" % inputs.outdir+'/dedispbf/')
 
