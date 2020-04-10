@@ -187,7 +187,6 @@ def plot_im(data, time_arr=None, freq=(109863281.25, 187976074.21875),
 
     data_[data_==0] = np.inf
     fig = plt.figure()
-    print(extent)
     plt.imshow(data_,origin='lower',aspect='auto',
                vmin=vmin,vmax=vmax,
                extent=extent, cmap='hot')
