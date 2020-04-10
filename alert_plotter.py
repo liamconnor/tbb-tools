@@ -350,7 +350,7 @@ if __name__ == '__main__':
     data_full=[]
     time_arr_full=[]
     freqaxis_full=[]
-    file=h5py.File(inputs.fn)
+    file=h5py.File(inputs.fn,'r')
     freqaxis_tot=get_timefreq(file)[1]
     nchantot=len(freqaxis_tot)
     file.close()
