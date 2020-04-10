@@ -66,7 +66,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
     if freqindex=='all':
         freqmin,freqmax=0,-1
     elif len(freqindex)==2:
-        pass
+        freqmin,freqmax=freqindex[0],freqmax[1]
     else:
         print("Expecting either str or len(2) tuple")
         exit()
@@ -79,6 +79,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
     except:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
         freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+        freqaxis=freqaxis[freqmin:freqmax]
         beamno=1
 
     print("\nAssuming time resolution: %0.6f\n" % timeres)
