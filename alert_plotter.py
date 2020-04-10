@@ -326,9 +326,9 @@ if __name__ == '__main__':
     
     if inputs.plot_all:
         try:
-            import matplotlib.pylab as plt 
+            import matplotlib.pylab as plt
+            fig=plt.figure() 
             plt.plot()
-            plt.show()
             plt.close()
         except:
             print("Cannot plot. Will save figures down.")
@@ -398,11 +398,10 @@ if __name__ == '__main__':
     if inputs.save_data:
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
-        print("\nSaved all plots to %s\n" % (inputs.outdir+'/plots/'))
-
-    if inputs.plot_all:
         print("\nSaved all data to %s\n" % (inputs.outdir+'/dedispbf/'))
 
+    if inputs.plot_all:
+        print("\nSaved all plots to %s\n" % (inputs.outdir+'/plots/'))
 
 
 
