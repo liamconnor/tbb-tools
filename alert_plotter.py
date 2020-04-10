@@ -327,6 +327,8 @@ if __name__ == '__main__':
     if inputs.plot_all:
         try:
             import matplotlib.pylab as plt 
+            plt.plot()
+            plt.close()
         except:
             print("Cannot plot. Will save figures down.")
             import matplotlib as mpl
