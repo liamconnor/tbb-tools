@@ -329,12 +329,7 @@ if __name__ == '__main__':
             print("Cannot plot, turning that off.")
             inputs.plot_all=False
 
-    if inputs.fn[-2:]=='h5':
-        res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
-                      fint=inputs.fint, freqindex='all')
-        data, timeres, time_arr, freqaxis, start_time_file_unix = res
-        ftype='.h5'
-    elif inputs.fn[-3:]=='npy':
+    if inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
         ftype='.npy'
         if inputs.rfi:
@@ -348,6 +343,11 @@ if __name__ == '__main__':
         exit()
 
     for chunk in range(inputs.nfchunks):
+        if inputs.fn[-2:]=='h5':
+            res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
+                          fint=inputs.fint, freqindex=(chunk*5000,(chunk+1)*5000))
+            data, timeres, time_arr, freqaxis, start_time_file_unix = res
+            ftype='.h5'
         # RFI clean data by zapping bad channels
         if inputs.rfi:
             fignamerfi=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_rfi.pdf'
