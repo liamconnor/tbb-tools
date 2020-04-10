@@ -66,7 +66,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
     if freqindex=='all':
         freqmin,freqmax=0,-1
     elif len(freqindex)==2:
-        freqmin,freqmax=freqindex[0],freqmax[1]
+        freqmin,freqmax=freqindex[0],freqindex[1]
     else:
         print("Expecting either str or len(2) tuple")
         exit()
