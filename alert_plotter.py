@@ -101,10 +101,10 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
 
     time_arr = np.linspace(startsec,endsec,ntime)
 
-    if fint>1 or tint>1:
-        data = rebin_tf(data, tint=tint, fint=fint)
-        time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
-        freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
+    # if fint>1 or tint>1:
+    #     data = rebin_tf(data, tint=tint, fint=fint)
+    #     time_arr = np.linspace(time_arr[0], time_arr[-1], data.shape[1])
+    #     freqaxis = np.linspace(freqaxis[0], freqaxis[-1], data.shape[0])
 
     return data, timeres, time_arr, freqaxis, start_time_file_unix
 
