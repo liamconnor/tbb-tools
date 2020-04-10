@@ -64,7 +64,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
     if freqindex=='all':
-        freqmin,freqmax=0,-1
+        freqmin,freqmax=0,None
     elif len(freqindex)==2:
         freqmin,freqmax=freqindex[0],freqindex[1]
     else:
