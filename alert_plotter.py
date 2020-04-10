@@ -330,7 +330,7 @@ if __name__ == '__main__':
 
     if inputs.fn[-2:]=='h5':
         res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
-                      fint=inputs.fint, freqindex=(0,10000))
+                      fint=inputs.fint, freqindex='all')
         data, timeres, time_arr, freqaxis, start_time_file_unix = res
         ftype='.h5'
     elif inputs.fn[-3:]=='npy':
