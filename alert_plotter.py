@@ -47,7 +47,15 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
         startsec=time_start-start_time_file_unix
         endsec=startsec+8
     elif len(time_range)==2:
-        startsec, endsec = time_range
+        if time_range[0]>1400000000:
+            time_start = time_range[0]-0.25
+            range_err = time_start>=start_time_file_unix and time_range[0]<=end_time_file_unix
+            assert range_err, "That unix time is not in the file"
+            print("Looking for data at unix time %s" % time_start)
+            startsec=time_start-start_time_file_unix
+            endsec=startsec+time_range[1]
+        else:
+            startsec, endsec = time_range
 
     if endsec<=startsec:
         print("Start time is larger than end time")
