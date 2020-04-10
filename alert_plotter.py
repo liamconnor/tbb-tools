@@ -170,6 +170,9 @@ def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
         print("Transposing for plotter")
         data_ = data_.T
 
+    if len(freq)>2:
+        freq = (freq[0], freq[-1])
+
     nfreq, ntime = data.shape
     print("Plotter: Assuming nfreq: %d and ntime: %d" % (nfreq, ntime))
     data_ -= np.mean(data_,axis=-1)[..., None]
@@ -364,8 +367,7 @@ if __name__ == '__main__':
     if inputs.plot_all:
         fignameim=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf'
         fignamedd=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf'
-        print((freqaxis[0], freqaxis[1]))
-        plot_im(data, time_arr, freq=(freqaxis[0], freqaxis[1]), vmax=3, vmin=-2, figname=fignameim)
+        plot_im(data, time_arr, freq=freqaxis, vmax=3, vmin=-2, figname=fignameim)
         plot_dedisp(data, time_arr, dm=inputs.dm, figname=fignamedd)
 
     # Save data to numpy arrays
