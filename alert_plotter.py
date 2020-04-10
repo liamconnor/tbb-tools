@@ -326,11 +326,6 @@ if __name__ == '__main__':
             print("Cannot plot, turning that off.")
             inputs.plot_all=False
 
-    if len(inputs.times)==2:
-        startsec, endsec = inputs.times[0], inputs.times[1]
-    elif len(inputs.times)==1:
-        startsec = inputs.times[0]
-        endsec = startsec + 5.0
 
     if inputs.fn[-2:]=='h5':
         res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
