@@ -369,6 +369,7 @@ if __name__ == '__main__':
         # Dedisperse data if given DM > 0
         if inputs.dm>0:
             print(data.shape)
+            print(freqaxis.shape)
             data = dedisperse(data, inputs.dm, freq=freqaxis,  
                               timeres=timeres)
 
