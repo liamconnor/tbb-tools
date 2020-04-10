@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 import time 
 
 def get_timefreq(file):
-    print(file['SUB_ARRAY_POINTING_000/BEAM_000/'])
     try:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
         freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
@@ -386,8 +385,8 @@ if __name__ == '__main__':
         freqaxis_full.append(freqaxis)
 
     data = np.concatenate(data_full, axis=0)
-    time_arr = np.array(time_arr_full)
-    freqaxis = np.array(freqaxis_full)
+    time_arr = np.concatenate(time_arr_full)
+    freqaxis = np.concatenate(freqaxis_full)
     print(data.shape, time_arr.shape, freqaxis.shape)
 
     # Make plots
