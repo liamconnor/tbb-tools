@@ -7,6 +7,20 @@ import h5py
 from datetime import datetime, timedelta
 import time 
 
+def get_timefreq(file)
+    try:
+        timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+        freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+        freqaxis=freqaxis[freqmin:freqmax]
+        beamno=0
+    except:
+        timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+        freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+        freqaxis=freqaxis[freqmin:freqmax]
+        beamno=1
+
+    return timeres, freqaxis, beamno
+
 def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
     """ Read in hdf5 beamformed data at native resolution.
     Transpose data to (nfreq, ntime)
@@ -71,16 +85,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
         print("Expecting either str or len(2) tuple")
         exit()
 
-    try:
-        timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
-        freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
-        freqaxis=freqaxis[freqmin:freqmax]
-        beamno=0
-    except:
-        timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
-        freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
-        freqaxis=freqaxis[freqmin:freqmax]
-        beamno=1
+    timeres, freqaxis, beamno = get_timefreq(file)
 
     print("\nAssuming time resolution: %0.6f\n" % timeres)
 
@@ -345,10 +350,16 @@ if __name__ == '__main__':
     data_full=[]
     time_arr_full=[]
     freqaxis_full=[]
+    file=h5py.File(inputs.fn)
+    freqaxis_tot=get_timefreq(file)[1]
+    nchantot=len(freqaxis_tot)
+    file.close()
+    fchunksize=int(np.ceil(nchantot/inputs.nfchunks))
     for chunk in range(inputs.nfchunks):
+        print(chunk, nchantot, fchunksize, inputs.nfchunks)
         if inputs.fn[-2:]=='h5':
             res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
-                          fint=inputs.fint, freqindex=(chunk*5000,(chunk+1)*5000))
+                          fint=inputs.fint, freqindex=(chunk*fchunksize,(chunk+1)*fchunksize))
             data, timeres, time_arr, freqaxis, start_time_file_unix = res
             ftype='.h5'
         # RFI clean data by zapping bad channels
