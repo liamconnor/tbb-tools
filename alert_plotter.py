@@ -316,7 +316,8 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--plot_all', 
                         help='Make plots along the way', action='store_true')
     parser.add_argument('--nfchunks', 
-                        help='number of freq chunks', default=1)
+                        help='number of freq chunks if arrays are too big', 
+                        default=1, type=int)
 
     inputs = parser.parse_args()
     
@@ -356,7 +357,7 @@ if __name__ == '__main__':
         if inputs.dm>0:
             data = dedisperse(data, inputs.dm, freq=freqaxis,  
                               timeres=timeres)
-            
+
         # Downsample / channelize data
         if inputs.fint>1 or inputs.tint>1:
             data = rebin_tf(data, tint=inputs.tint, fint=inputs.fint)
