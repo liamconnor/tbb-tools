@@ -372,7 +372,7 @@ if __name__ == '__main__':
         time_arr_full.append(time_arr)
         freqaxis_full.append(freqaxis)
 
-    data = np.concatentate(data_full, axis=0)
+    data = np.concatenate(data_full, axis=0)
     time_arr = np.array(time_arr_full)
     freqaxis = np.array(freqaxis_full)
     print(data.shape, time_arr.shape, freqaxis.shape)
