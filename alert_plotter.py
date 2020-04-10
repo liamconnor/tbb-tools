@@ -359,7 +359,7 @@ if __name__ == '__main__':
     # Save data to numpy arrays
     if inputs.save_data:
         np.save(homedir+'/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
-        np.save(homedir+'/'inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
+        np.save(homedir+'/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
     print("\nSaved all plots to ./*pdf\n")
 
