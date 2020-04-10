@@ -328,6 +328,7 @@ if __name__ == '__main__':
         try:
             import matplotlib.pylab as plt 
             plt.plot()
+            plt.show()
             plt.close()
         except:
             print("Cannot plot. Will save figures down.")
@@ -356,6 +357,7 @@ if __name__ == '__main__':
     nchantot=len(freqaxis_tot)
     file.close()
     fchunksize=int(np.ceil(nchantot/inputs.nfchunks))
+    freq_ref=np.median(freqaxis_tot)
     for chunk in range(inputs.nfchunks):
         if inputs.fn[-2:]=='h5':
             res = read_h5(inputs.fn, inputs.times, tint=inputs.tint,
@@ -370,7 +372,7 @@ if __name__ == '__main__':
         # Dedisperse data if given DM > 0
         if inputs.dm>0:
             data = dedisperse(data, inputs.dm, freq=freqaxis,  
-                              timeres=timeres)
+                              timeres=timeres, freq_ref=freq_ref)
 
         # Downsample / channelize data
         if inputs.fint>1 or inputs.tint>1:
@@ -397,9 +399,10 @@ if __name__ == '__main__':
     if inputs.save_data:
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
+        print("\nSaved all plots to %s\n" % (inputs.outdir+'/plots/'))
 
-    print("\nSaved all plots to %s\n" % (inputs.outdir+'/plots/'))
-    print("\nSaved all data to %s\n" % (inputs.outdir+'/dedispbf/'))
+    if inputs.plot_all:
+        print("\nSaved all data to %s\n" % (inputs.outdir+'/dedispbf/'))
 
 
 
