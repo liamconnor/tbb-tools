@@ -372,6 +372,6 @@ if __name__ == '__main__':
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'_DM%0.2f' % inputs.dm, data)
         np.save(inputs.outdir+'/dedispbf/'+inputs.fn.strip(ftype)+'timeseries_DM%0.2f' % inputs.dm, data.mean(0))
 
-    print("\nSaved all plots to %s\n" % inputs.outdir+'/plots/')
-    print("\nSaved all data to %s\n" % inputs.outdir+'/dedispbf/')
+    print("\nSaved all plots to %s\n" % (inputs.outdir+'/plots/'))
+    print("\nSaved all data to %s\n" % (inputs.outdir+'/dedispbf/'))
 
