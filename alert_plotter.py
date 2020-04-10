@@ -1,7 +1,6 @@
 import os
 
 import numpy as np
-import matplotlib.pylab as plt 
 import argparse 
 import h5py
 from datetime import datetime, timedelta
@@ -327,11 +326,12 @@ if __name__ == '__main__':
     
     if inputs.plot_all:
         try:
-            fig = plt.figure()
-            plt.close()
+            import matplotlib.pylab as plt 
         except:
-            print("Cannot plot, turning that off.")
-            inputs.plot_all=False
+            print("Cannot plot. Will save figures down.")
+            import matplotlib as mpl
+            mpl.use('Agg')
+            import matplotlib.pyplot as plt
 
     if inputs.fn[-3:]=='npy':
         data = read_npy(inputs.fn)
