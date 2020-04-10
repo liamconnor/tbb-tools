@@ -160,7 +160,7 @@ def read_npy(fn):
 
     return data
 
-def plot_im(data, freq=(109863281.25, 187976074.21875), time_arr=None,
+def plot_im(data, time_arr=None, freq=(109863281.25, 187976074.21875), 
             taxis=1, vmax=3, vmin=-2, figname=None):
     """ Plot the 2D time/freq data. Freq is in Hz. vmax and 
     vmin are in sigmas. 
@@ -354,7 +354,7 @@ if __name__ == '__main__':
                                          figname=fignamerfi)
     # Dedisperse data if given DM > 0
     if inputs.dm>0:
-        data = dedisperse(data, inputs.dm, freq=freqaxis, 
+        data = dedisperse(data, inputs.dm, freq=freqaxis,  
                           timeres=timeres)
     # Downsample / channelize data
     if inputs.fint>1 or inputs.tint>1:
@@ -367,7 +367,7 @@ if __name__ == '__main__':
     if inputs.plot_all:
         fignameim=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_waterfall.pdf'
         fignamedd=inputs.outdir+'/plots/'+inputs.fn.strip(ftype)+'_dedisp_ts.pdf'
-        plot_im(data, time_arr, freq=freqaxis, vmax=3, vmin=-2, figname=fignameim)
+        plot_im(data, time_arr, freq=1e6*freqaxis, vmax=3, vmin=-2, figname=fignameim)
         plot_dedisp(data, time_arr, dm=inputs.dm, figname=fignamedd)
 
     # Save data to numpy arrays
