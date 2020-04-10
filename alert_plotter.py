@@ -380,11 +380,9 @@ if __name__ == '__main__':
             timeres *= inputs.tint
 
         data_full.append(data)
-        time_arr_full.append(time_arr)
         freqaxis_full.append(freqaxis)
 
     data = np.concatenate(data_full, axis=0)
-    time_arr = np.concatenate(time_arr_full)
     freqaxis = np.concatenate(freqaxis_full)
     print(data.shape, time_arr.shape, freqaxis.shape)
 
