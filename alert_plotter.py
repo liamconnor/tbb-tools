@@ -7,7 +7,7 @@ import h5py
 from datetime import datetime, timedelta
 import time 
 
-def read_h5(fn, time_range=(0,5), tint=1, fint=1):
+def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
     """ Read in hdf5 beamformed data at native resolution.
     Transpose data to (nfreq, ntime)
 
@@ -63,9 +63,13 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
     elif endsec-startsec>30.0:
         print("Are you sure you want %0.2f sec of data?" % (endsec-startsec))
 
+    if freqaxis=='all':
+        freqmin,freqmax=0,-1
+
     try:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
         freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+        freqaxis=freqaxis[freqmin:freqmax]
         beamno=0
     except:
         timeres=file['SUB_ARRAY_POINTING_000/BEAM_001/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
@@ -85,16 +89,16 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1):
         nchunk=int(np.ceil(ntime/chunksize))
         for jj in range(nchunk):
             startjj,endjj = int(jj*chunksize),int((jj+1)*chunksize)
-            data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,:]
+            data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,freqmin:freqmax]
 
             if jj<nchunk-1:
-                data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,:]
+                data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:startsample+endjj,freqmin:freqmax]
                 data[:, startjj:endjj] = data_.T
             else:
-                data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:endsample,:]  
+                data_=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample+startjj:endsample,freqmin:freqmax]  
                 data[:, startjj:] = data_.T
     else:
-        data=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample:endsample,:]
+        data=file["/SUB_ARRAY_POINTING_000/BEAM_00%d/STOKES_0" % beamno][startsample:endsample,freqmin:freqmax]
         data=data.T
 
     if len(data)==0:
