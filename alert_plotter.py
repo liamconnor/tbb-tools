@@ -372,7 +372,7 @@ if __name__ == '__main__':
         # Dedisperse data if given DM > 0
         if inputs.dm>0:
             data = dedisperse(data, inputs.dm, freq=freqaxis,  
-                              timeres=timeres, freq_ref=freq_ref)
+                              timeres=timeres, freq_ref=freq_ref_MHz)
 
         # Downsample / channelize data
         if inputs.fint>1 or inputs.tint>1:
@@ -386,7 +386,6 @@ if __name__ == '__main__':
 
     data = np.concatenate(data_full, axis=0)
     freqaxis = np.concatenate(freqaxis_full)
-    print(data.shape, time_arr.shape, freqaxis.shape)
 
     # Make plots
     if inputs.plot_all:
