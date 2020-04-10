@@ -111,7 +111,7 @@ def read_h5(fn, time_range=(0,5), tint=1, fint=1, freqindex='all'):
         print("No data in specified range")
         exit()
 
-    time_arr = np.linspace(startsec,endsec,ntime)
+    time_arr = start_time_file_unix + np.linspace(startsec,endsec,ntime)
 
     # if fint>1 or tint>1:
     #     data = rebin_tf(data, tint=tint, fint=fint)
