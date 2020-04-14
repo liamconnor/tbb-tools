@@ -79,7 +79,7 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
 
 def write_to_fil(data, header, fn):
      filterbank.create_filterbank_file(
-          fn, header, spectra=data, mode='readwrite')
+          fn, header, spectra=data, mode='readwrite', nbits=header['nbits']))
      print("Writing to %s" % fn)
 
 def read_fil_data(fn, start=0, stop=1e7):
@@ -115,7 +115,7 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
 
      data /= np.median(np.mean(data))
      data *= 100
-     #data = data.astype(np.int8)
+     data = data.astype('f4')
 
      if len(data)==0:
           print("Empty data")
