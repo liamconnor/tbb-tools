@@ -62,6 +62,8 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
    filhdr['foff'] = foff
    filhdr['nbits'] = 32
 
+   print(filhdr)
+   print(freqaxis)
    try:
       import sigproc
       filhdr['rawdatafile'] = fn_fil_out
