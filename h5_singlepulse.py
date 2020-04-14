@@ -111,7 +111,7 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
    if nchunk=='all':
      nchunk=int(1e6)
 
-   for ii in range(nchunk):
+   for ii in range(int(nchunk)):
      startsample, endsample = ii*chunksize, (ii+1)*chunksize
      data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
 
