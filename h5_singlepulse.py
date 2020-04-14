@@ -77,7 +77,7 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
    except:
       print("Either could not load sigproc or create filterbank")
 
-  print(newhdr)
+   print(newhdr)
 
 def write_to_fil(data, header, fn):
      filterbank.create_filterbank_file(
