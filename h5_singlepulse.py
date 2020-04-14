@@ -53,11 +53,11 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
    freqaxis=f['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
    freqaxis *= 1e-6
    nchans=len(freqaxis)
-   foff=-1*np.diff(freqaxis)[0]
+   foff=np.diff(freqaxis)[0]
 
    filhdr['tsamp'] = dt
    filhdr['nchans'] = nchans
-   filhdr['fch1'] = freqaxis[-1]
+   filhdr['fch1'] = freqaxis[0]
    filhdr['foff'] = foff
    filhdr['nbits'] = 32
 
