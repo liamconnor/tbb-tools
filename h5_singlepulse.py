@@ -77,8 +77,6 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
    except:
       print("Either could not load sigproc or create filterbank")
 
-   print(newhdr)
-
 def write_to_fil(data, header, fn):
      filterbank.create_filterbank_file(
           fn, header, spectra=data, mode='readwrite')
@@ -115,9 +113,9 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
      startsample, endsample = ii*chunksize, (ii+1)*chunksize
      data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
 
-     data /= 1e12
-     data *= 50
-     data = data.astype(np.int8)
+     data /= np.median(np.mean(data))
+     data *= 100
+     #data = data.astype(np.int8)
 
      if len(data)==0:
           print("Empty data")
