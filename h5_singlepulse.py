@@ -120,7 +120,6 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
      data = data.astype('f4')
 
      if len(data)==0:
-          print("Empty data")
           continue
 
      if ii==0:
@@ -145,6 +144,8 @@ if __name__ == '__main__':
                         default=1, type=int)
     parser.add_argument('-fint', '--fint', help='downsample in frequency', 
                         default=1, type=int)
+    parser.add_argument('-n', '--nchunk', help='downsample in frequency', 
+                        default='all', type=str)
     parser.add_argument('-dm', '--dm', help='dispersion measure', 
                         default=0, type=float)
     parser.add_argument('-s', '--save_data', help='save data to .npy',
@@ -157,7 +158,7 @@ if __name__ == '__main__':
 
     inputs = parser.parse_args()
     create_new_filterbank(inputs.fnh5, inputs.fnfil, telescope='LOFAR')
-    h5_to_fil(inputs.fnh5, inputs.fnfil, nchunk='all')
+    h5_to_fil(inputs.fnh5, inputs.fnfil, nchunk=inputs.nchunk)
     arg_str = (inputs.fnh5.strip('.h5'), inputs.dm, inputs.fnfil)
     os.system('prepdata -o %s -dm %f %s' % arg_str)
 
