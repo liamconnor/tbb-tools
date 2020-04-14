@@ -117,15 +117,15 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all', rficlean=False):
    for ii in range(int(nchunk)):
      startsample, endsample = ii*chunksize, (ii+1)*chunksize
      data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
-     data = data.T 
 
      if rficlean:
+       data = data.T 
        data, ind_use, mask = dumb_clean(data, plot_clean=False)
        data[np.isnan(data)] = 0.0
+       data = data.T
 
      data = data.astype('f4')
-     data = data.T 
-     
+
      if len(data)==0:
           continue
 
