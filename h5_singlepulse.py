@@ -79,7 +79,7 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
 
 def write_to_fil(data, header, fn):
      filterbank.create_filterbank_file(
-          fn, header, spectra=data, mode='readwrite', nbits=header['nbits']))
+          fn, header, spectra=data, mode='readwrite', nbits=header['nbits'])
      print("Writing to %s" % fn)
 
 def read_fil_data(fn, start=0, stop=1e7):
