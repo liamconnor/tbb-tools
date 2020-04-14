@@ -106,6 +106,8 @@ def read_fil_data(fn, start=0, stop=1e7):
      return data, freq, delta_t, header
 
 def h5_to_fil(fnh5, fn_fil_out, nchunk='all', rficlean=False):
+   if rficlean:
+    print("RFI Cleaning")
    f = h5py.File(fnh5,'r')
    chunksize = int(1e4)
 
@@ -117,10 +119,9 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all', rficlean=False):
      data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
 
      if rficlean:
-       data, ind_use, mask = dumb_clean(data, plot_clean=False)
+       data, ind_use, mask = dumb_clean(data.T, plot_clean=False)
 
-#     data /= np.median(np.mean(data))
-#     data *= 100
+     data = data.T
      data = data.astype('f4')
 
      if len(data)==0:
