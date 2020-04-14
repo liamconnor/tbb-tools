@@ -46,9 +46,9 @@ def read_fil_data(fn, start=0, stop=1):
      return data, freq, delta_t, header
 
 def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
-   file = h5py.File(fnh5,'r')
-   dt=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
-   freqaxis=file['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
+   f = h5py.File(fnh5,'r')
+   dt=f['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_0/'].attrs['INCREMENT']
+   freqaxis=f['SUB_ARRAY_POINTING_000/BEAM_000/COORDINATES/COORDINATE_1/'].attrs['AXIS_VALUES_WORLD']
    freqaxis *= 1e-6
    nchans=len(freqaxis)
    foff=np.diff(freqaxis)[0]
@@ -71,11 +71,13 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
       print("Writing new header to '%s'" % fn_fil_out)
       outfile = open(fn_fil_out, 'wb')
       outfile.write(newhdr)
-      spectrum = np.zeros([filhdr['nchans']], dtype=np.uint8)
+      spectrum = np.zeros([filhdr['nchans']], dtype='f4')
       outfile.write(spectrum)
       outfile.close()
    except:
       print("Either could not load sigproc or create filterbank")
+
+  print(newhdr)
 
 def write_to_fil(data, header, fn):
      filterbank.create_filterbank_file(
