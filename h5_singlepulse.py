@@ -57,7 +57,7 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
    filhdr['nchans'] = nchans
    filhdr['fch1'] = freqaxis[-1]
    filhdr['foff'] = foff
-   filhdr['bnits'] = 32
+   filhdr['nbits'] = 32
 
    try:
       import sigproc
