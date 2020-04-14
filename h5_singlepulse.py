@@ -1,12 +1,13 @@
 import numpy as np
 import argparse
 import h5py
+import matplotlib.pylab as plt
 
 import filterbank
 
 filhdr = {'telescope_id': 4,
       'az_start': 0.0,
-      'nbits': 8,
+      'nbits': 32,
       'source_name': 'B0329+54',
       'data_type': 1,
       'nchans': 0,
@@ -101,16 +102,16 @@ def read_fil_data(fn, start=0, stop=1e7):
      return data, freq, delta_t, header
 
 def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
-   file = h5py.File(fnh5,'r')
+   f = h5py.File(fnh5,'r')
    chunksize = int(1e4)
 
    if nchunk=='all':
      nchunk=int(1e6)
 
    for ii in range(nchunk):
-     print(ii, nchunk)
      startsample, endsample = ii*chunksize, (ii+1)*chunksize
-     data = file["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
+     data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
+
      data /= 1e12
      data *= 50
      data = data.astype(np.int8)
