@@ -6,6 +6,7 @@ import h5py
 import matplotlib.pylab as plt
 
 import filterbank
+from alert_plotter import dumb_clean
 
 filhdr = {'telescope_id': 4,
       'az_start': 0.0,
@@ -115,6 +116,8 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
      startsample, endsample = ii*chunksize, (ii+1)*chunksize
      data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
 
+     data, ind_use, mask = dumb_clean(data, plot_clean=False)
+
 #     data /= np.median(np.mean(data))
 #     data *= 100
      data = data.astype('f4')
@@ -160,7 +163,7 @@ if __name__ == '__main__':
     create_new_filterbank(inputs.fnh5, inputs.fnfil, telescope='LOFAR')
     h5_to_fil(inputs.fnh5, inputs.fnfil, nchunk=inputs.nchunk)
     arg_str = (inputs.fnh5.strip('.h5'), inputs.dm, inputs.fnfil)
-    os.system('prepdata -o %s -dm %f %s' % arg_str)
-
+    os.system('prepdata -nobary -o %s -dm %f %s' % arg_str)
+    os.system('single_pulse_search.py -b -x %s.dat' % inputs.fnh5.strip('.h5'))
 
 
