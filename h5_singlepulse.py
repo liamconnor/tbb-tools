@@ -120,6 +120,7 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all', rficlean=False):
 
      if rficlean:
        data, ind_use, mask = dumb_clean(data.T, plot_clean=False)
+       data[np.isnan(data)] = 0.0
 
      data = data.T
      data = data.astype('f4')
