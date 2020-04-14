@@ -113,8 +113,8 @@ def h5_to_fil(fnh5, fn_fil_out, nchunk='all'):
      startsample, endsample = ii*chunksize, (ii+1)*chunksize
      data = f["/SUB_ARRAY_POINTING_000/BEAM_000/STOKES_0"][startsample:endsample,:]
 
-     data /= np.median(np.mean(data))
-     data *= 100
+#     data /= np.median(np.mean(data))
+#     data *= 100
      data = data.astype('f4')
 
      if len(data)==0:
