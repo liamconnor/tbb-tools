@@ -58,7 +58,7 @@ def create_new_filterbank(fnh5, fn_fil_out, telescope='LOFAR'):
 
    filhdr['tsamp'] = dt
    filhdr['nchans'] = nchans
-   filhdr['fch1'] = freqaxis[0]
+   filhdr['fch1'] = freqaxis[-1]
    filhdr['foff'] = foff
    filhdr['nbits'] = 32
 
