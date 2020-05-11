@@ -211,7 +211,11 @@ def plot_dedisp(data_dd, time_arr=None, dm=0, figname=None):
     else:
         xlab_ = 'Time (sec)'
 
-    dd_ts = data_dd.mean(0)
+    ivar = (np.var(data_dd, axis=1)[:, None])**-1
+    ivar[ivar==np.inf] = 0
+    ivar[ivar!=ivar] = 0
+
+    dd_ts = (ivar*data_dd).mean(0)
     fig = plt.figure()
     plt.plot(time_arr, dd_ts)
     plt.xlabel(xlab_, fontsize=16)
